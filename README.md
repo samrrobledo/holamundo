@@ -1,2 +1,2 @@
 # holamundo
-hola mundo wey
+hola mundo
