@@ -1,0 +1,1665 @@
+{
+	"info": {
+		"_postman_id": "b64d2b44-dbda-4310-a1b1-b9d84314de0f",
+		"name": "Para todos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "D. genérico",
+			"item": [
+				{
+					"name": "QA Copy",
+					"item": [
+						{
+							"name": "Login",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"pm.environment.set(\"token\", jsonData['accessToken']);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n\"u\": \"806118301\",\r\n\"p\": \"Abc123$$\"\r\n}\r\n\r\n\r\n/*\r\n{\r\n    \"u\": \"1140871059\",\r\n    \"p\": \"Pridemorales@29\"\r\n}\r\n*/",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://plcolab-api-2qa.azurewebsites.net/JwtAuth/Registration/Login",
+									"protocol": "https",
+									"host": [
+										"plcolab-api-2qa",
+										"azurewebsites",
+										"net"
+									],
+									"path": [
+										"JwtAuth",
+										"Registration",
+										"Login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Emisión documento generico",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"postman.setGlobalVariable('IssueDate', Date.create().format('{yyyy}-{MM}-{dd}'));",
+											"postman.setGlobalVariable('IssueTime', Date.create().format('{HH}:{mm}:{ss}'));",
+											"",
+											"var documentoid = pm.variables.get('conteo');",
+											"postman.setGlobalVariable('conteo',++documentoid);",
+											"",
+											"postman.setGlobalVariable('documento', 'RCA100170000018200'+documentoid);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"\r",
+											"// Example: FACTURA-UBL(990000000;2016-10-11;PRINCIPAL;PRINCIPAL)\r",
+											"var ldfString = jsonData.LDF;\r",
+											"var invoiceUUID = jsonData.UUID;\r",
+											"var invoiceDate = postman.getGlobalVariable('IssueDate')\r",
+											"//Ejemplo:2016-10-12\r",
+											"invoiceDateMonth = invoiceDate.substring(0, 8) + \"01\";\r",
+											"\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_LDF\", ldfString);\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_UUID\", invoiceUUID);\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_YYYYMM01\", invoiceDateMonth);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiJEaXN0cmlidWNpb25lcyBGbHVqbyBTLkEuUyIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6Ik1hbmdhIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoiZGlzdHJpYnVjaW9uZXNmbHVqb0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMTIxMjM0NTY3IiwibmJmIjoxNjQ4NzMzMjEzLCJleHAiOjE2NTY1OTU2MTMsImlhdCI6MTY0ODczMzIxMywiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.FkSV-KDpYyr027mGK2hOqNPP-gBuewyYd5RU-Hrv6qg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYmI2YzVhNi04ZmQ4LTRlNDItYTcxMS1hZDNjMDEzNTU4NmMiLCJuYW1lIjoiMTE0MDg3MTA1OSIsImRlc2MiOiJLZXZpbiBNb3JhbGVzIiwidXNyIjoiMTE0MDg3MTA1OSIsIjNpZCI6IjExNDA4NzEwNTkiLCIzbmFtZSI6IktldmluIiwiY2NvZCI6IkNPIiwicmVnIjoiMDUiLCJjaXR5IjoiMDUwNzkwMTMiLCJhZGRyIjoiS3JhIDI2YzcgIyA3MyIsInRheCI6Ik5PSVZBIiwibWFpbCI6ImtldmlubW9yYWxlc0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMDE1OTk4NjYzIiwibmJmIjoxNjMxNTY4NDE4LCJleHAiOjE2Mzk0MzA4MTgsImlhdCI6MTYzMTU2ODQxOCwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.nGl9oUGnSTPRfiYZPRUF09SEs0CRpKuKjY8L63lZwFQ",
+										"disabled": true
+									},
+									{
+										"key": "REQUEST-ID",
+										"value": "{{$guid}}"
+									},
+									{
+										"key": "X-REF-DOCUMENTTYPE",
+										"value": "DOCUMENTO-GENERICO"
+									},
+									{
+										"key": "X-REF-BRANCH",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-REF-PROCESS",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-TRACE",
+										"value": "True"
+									},
+									{
+										"key": "X-Who",
+										"type": "text",
+										"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+										"disabled": true
+									},
+									{
+										"key": "X-REF-THIRDPARTY",
+										"value": "{{ThirdParty}}",
+										"disabled": true
+									},
+									{
+										"key": "X-REF-TEMPLATE",
+										"type": "text",
+										"value": "Facture",
+										"disabled": true
+									},
+									{
+										"key": "X-TESTING-DIANRULE",
+										"value": "Regla: 90, Rechazo: Documento procesado anteriormente.",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<DocumentoGenerico xmlns=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ext=\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\">\n    <Cabecera NumeroDocumento=\"{{documento}}\" SubTipoDocumento=\"DOCUMENTO-CUPON\"\n FechaDocumento=\"{{IssueDate}}\" Descripcion=\"PP02\" Sucursal=\"Agencia\" Observaciones=\"Prueba de observacion 02\" Clave=\"12345\" NumeroTransaccion=\"01\" Origen=\"{{$randomCity}}\" Destino=\"{{$randomCity}}\" Referencia1=\"{{$randomStreetAddress}}\" Referencia2=\"{{$randomStreetAddress}}\" />\n    <Destinatario RazonSocial=\"{{$randomFullName}}\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"{{$randomBankAccount}}\" Direccion=\"{{$randomCountry}}\" NombrePais=\"{{$randomCountry}}\" NombreDepartamento=\"{{$randomStreetAddress}}\" NombreCiudad=\"{{$randomCity}}\"/>\n    <Notificaciones  TextoSMS=\"\">\n        <Notificacion Tipo=\"mail\" Para=\"japeli1987@yopmail.com\" />\n        <Notificacion Tipo=\"mail\" Para=\"2022@dispostable.com\" />\n        <Notificacion Tipo=\"mail\" Para=\"japeli63@yopmail.com\" />\n        <Notificacion Tipo=\"mail\" Para=\"ana@example.com\" />\n        <Notificacion Tipo=\"mail\" Para=\"{{$randomExampleEmail}}\" />\n        <Notificacion Tipo=\"sms\"  Para=\"322145875464\"/>\n        <Notificacion Tipo=\"SMS\"  Para=\"{{$randomPhoneNumber}}\"/>\n    </Notificaciones>\n    <Detalles>\n        <Detalle NumeroDetalle=\"1\" Descripcion=\"PP01 Descripcion\" Observaciones=\"PP01 Observaciones\">\n            <DatosAdicionales>\n                <CampoAdicional Nombre=\"TextoSuperior2\" Valor=\"PRACTICAR RETENCIÓN EN LA FUENTE DEL 1%\"/>\n                <CampoAdicional Nombre=\"TextoSuperior3\" Valor=\"Tarifa ICA Bogotá 9.66*1000\"/>\n                <CampoAdicional Nombre=\"Ext\" Valor=\"7477\"/>\n            </DatosAdicionales>\n        </Detalle>\n        <Detalle NumeroDetalle=\"2\" Descripcion=\"PP01 Descripcion\" Observaciones=\"PP01 Observaciones\">\n            <DatosAdicionales>\n                <CampoAdicional Nombre=\"TextoSuperior2\" Valor=\"PRACTICAR RETENCIÓN EN LA FUENTE DEL 1%\"/>\n                <CampoAdicional Nombre=\"TextoSuperior3\" Valor=\"Tarifa ICA Bogotá 9.66*1000\"/>\n                <CampoAdicional Nombre=\"Ext\" Valor=\"7477\"/>\n            </DatosAdicionales>\n        </Detalle>\n    </Detalles>\n    <DatosAdicionales>\n        <CampoAdicional Nombre=\"Atributo1\" Valor=\"1715620003765\"/>\n        <CampoAdicional Nombre=\"Atributo2\" Valor=\"79641422\"/>\n        <CampoAdicional Nombre=\"Atributo3\" Valor=\"SBS1\"/>\n        <CampoAdicional Nombre=\"Atributo4\" Valor=\"000000000\"/>\n        <CampoAdicional Nombre=\"Atributo5\" Valor=\"\"/>\n        <CampoAdicional Nombre=\"Atributo6\" Valor=\"\"/>\n        <CampoAdicional Nombre=\"Atributo7\" Valor=\"\"/>\n        <CampoAdicional Nombre=\"Atributo8\" Valor=\"\"/>\n    </DatosAdicionales>\n    <ext:UBLExtensions>\n        <ext:UBLExtension>\n        </ext:UBLExtension>\n    </ext:UBLExtensions>\n</DocumentoGenerico>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Issue/Issue/UBL",
+									"protocol": "https",
+									"host": [
+										"plcolab-api-2qa",
+										"azurewebsites",
+										"net"
+									],
+									"path": [
+										"PLColab.Issue",
+										"Issue",
+										"UBL"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Documents/GetDocuments",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"issueDateBegin\": \"2021-09-16\",\r\n    \"issueDateEnd\": \"2021-09-16\",\r\n    \"documentNumberFull\": \"RCA1001700000182008\",\r\n    \"DocumentSubTypeCodes\": null,\r\n    \"branchCode\": null,\r\n    \"customerIdentificationNumber\": null,\r\n    \"branches\":null,\r\n    \"isSignature\": null,\r\n    \"isTimestamp\": null,\r\n    \"signatureDateBegin\": null,\r\n    \"signatureDateEnd\": null,\r\n    \"timestampDateBegin\": null,\r\n    \"timestampDateEnd\": null,\r\n    \"origenTransaccion\": null,\r\n    \"destinoTransaccion\": null,\r\n    \"observacion\": null\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/GetDocuments?pageIndex=1&pageSize=100&includeCreditNoteStatus=True",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"GetDocuments"
+									],
+									"query": [
+										{
+											"key": "pageIndex",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "100"
+										},
+										{
+											"key": "includeCreditNoteStatus",
+											"value": "True"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generico adjunto",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"postman.setGlobalVariable('IssueDate', Date.create().format('{yyyy}-{MM}-{dd}'));",
+											"postman.setGlobalVariable('IssueTime', Date.create().format('{HH}:{mm}:{ss}'));",
+											"",
+											"var documentoid = pm.variables.get('conteo');",
+											"postman.setGlobalVariable('conteo',++documentoid);",
+											"",
+											"postman.setGlobalVariable('documento', 'RCA100170000018200'+documentoid);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"\r",
+											"// Example: FACTURA-UBL(990000000;2016-10-11;PRINCIPAL;PRINCIPAL)\r",
+											"var ldfString = jsonData.LDF;\r",
+											"var invoiceUUID = jsonData.UUID;\r",
+											"var invoiceDate = postman.getGlobalVariable('IssueDate')\r",
+											"//Ejemplo:2016-10-12\r",
+											"invoiceDateMonth = invoiceDate.substring(0, 8) + \"01\";\r",
+											"\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_LDF\", ldfString);\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_UUID\", invoiceUUID);\r",
+											"postman.setEnvironmentVariable(\"LAST_INVOICE_YYYYMM01\", invoiceDateMonth);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"disabled": true
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYmI2YzVhNi04ZmQ4LTRlNDItYTcxMS1hZDNjMDEzNTU4NmMiLCJuYW1lIjoiMTE0MDg3MTA1OSIsImRlc2MiOiJLZXZpbiBNb3JhbGVzIiwidXNyIjoiMTE0MDg3MTA1OSIsIjNpZCI6IjExNDA4NzEwNTkiLCIzbmFtZSI6IktldmluIiwiY2NvZCI6IkNPIiwicmVnIjoiMDUiLCJjaXR5IjoiMDUwNzkwMTMiLCJhZGRyIjoiS3JhIDI2YzcgIyA3MyIsInRheCI6Ik5PSVZBIiwibWFpbCI6ImtldmlubW9yYWxlc0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMDE1OTk4NjYzIiwibmJmIjoxNjMxMTE3ODAyLCJleHAiOjE2Mzg5ODAyMDIsImlhdCI6MTYzMTExNzgwMiwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.qIlTOCRpPYjzEpyLwScAgfqMIX6vE2-AvE0YwlXh2P0",
+										"disabled": true
+									},
+									{
+										"key": "REQUEST-ID",
+										"value": "{{$guid}}"
+									},
+									{
+										"key": "X-REF-DOCUMENTTYPE",
+										"value": "DOCUMENTO-GENERICO"
+									},
+									{
+										"key": "X-REF-BRANCH",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-REF-PROCESS",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-TRACE",
+										"value": "True"
+									},
+									{
+										"key": "X-Who",
+										"type": "text",
+										"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+										"disabled": true
+									},
+									{
+										"key": "X-REF-THIRDPARTY",
+										"value": "{{ThirdParty}}",
+										"disabled": true
+									},
+									{
+										"key": "X-REF-TEMPLATE",
+										"type": "text",
+										"value": "Facture",
+										"disabled": true
+									},
+									{
+										"key": "X-TESTING-DIANRULE",
+										"value": "Regla: 90, Rechazo: Documento procesado anteriormente.",
+										"type": "text"
+									},
+									{
+										"key": "X-GRAPHIC-REPRESENTATION-ATTACHED",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "",
+											"value": "<DocumentoGenerico xmlns=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ext=\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\">\n\t<Cabecera NumeroDocumento=\"{{documento}}\" SubTipoDocumento=\"DOCUMENTO-SPR\"\n FechaDocumento=\"{{IssueDate}}\" Descripcion=\"PP02\" Sucursal=\"Agencia\" Observaciones=\"Prueba de observacion 02\" Clave=\"123\" NumeroTransaccion=\"01\" Origen=\"{{$randomCity}}\" Destino=\"{{$randomCity}}\" Referencia1=\"{{$randomStreetAddress}}\" Referencia2=\"{{$randomStreetAddress}}\" />\n\t<Destinatario RazonSocial=\"{{$randomFullName}}\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"{{$randomBankAccount}}\" Direccion=\"{{$randomCountry}}\" NombrePais=\"{{$randomCountry}}\" NombreDepartamento=\"{{$randomStreetAddress}}\" NombreCiudad=\"{{$randomCity}}\"/>\n\t<Notificaciones  TextoSMS=\"\">\n     \n        <Notificacion Tipo=\"mail\" Para=\"es@gmail.com\" />\n        <Notificacion Tipo=\"mail\" Para=\"correo@gmail.com\" />\n\t\t<Notificacion Tipo=\"mail\" Para=\"{{$randomExampleEmail}}\" />\n        <Notificacion Tipo=\"sms\"  Para=\"3154264152\"/>\n        \n        \n\n\t\t<Notificacion Tipo=\"SMS\"  Para=\"{{$randomPhoneNumber}}\"/>\n    </Notificaciones>\n\t<Detalles>\n\t\t<Detalle NumeroDetalle=\"1\" Descripcion=\"PP01 Descripcion\" Observaciones=\"PP01 Observaciones\">\n\t\t\t<DatosAdicionales>\n\t\t\t\t<CampoAdicional Nombre=\"TextoSuperior2\" Valor=\"PRACTICAR RETENCIÓN EN LA FUENTE DEL 1%\"/>\n\t\t\t\t<CampoAdicional Nombre=\"TextoSuperior3\" Valor=\"Tarifa ICA Bogotá 9.66*1000\"/>\n\t\t\t\t<CampoAdicional Nombre=\"Ext\" Valor=\"7477\"/>\n\t\t\t</DatosAdicionales>\n\t\t</Detalle>\n\t\t<Detalle NumeroDetalle=\"2\" Descripcion=\"PP01 Descripcion\" Observaciones=\"PP01 Observaciones\">\n\t\t\t<DatosAdicionales>\n\t\t\t\t<CampoAdicional Nombre=\"TextoSuperior2\" Valor=\"PRACTICAR RETENCIÓN EN LA FUENTE DEL 1%\"/>\n\t\t\t\t<CampoAdicional Nombre=\"TextoSuperior3\" Valor=\"Tarifa ICA Bogotá 9.66*1000\"/>\n\t\t\t\t<CampoAdicional Nombre=\"Ext\" Valor=\"7477\"/>\n\t\t\t</DatosAdicionales>\n\t\t</Detalle>\n\t</Detalles>\n\t<DatosAdicionales>\n\t\t<CampoAdicional Nombre=\"Atributo1\" Valor=\"1715620003765\"/>\n\t\t<CampoAdicional Nombre=\"Atributo2\" Valor=\"79641422\"/>\n\t\t<CampoAdicional Nombre=\"Atributo3\" Valor=\"SBS1\"/>\n\t\t<CampoAdicional Nombre=\"Atributo4\" Valor=\"000000000\"/>\n\t\t<CampoAdicional Nombre=\"Atributo5\" Valor=\"\"/>\n\t\t<CampoAdicional Nombre=\"Atributo6\" Valor=\"\"/>\n\t\t<CampoAdicional Nombre=\"Atributo7\" Valor=\"\"/>\n\t\t<CampoAdicional Nombre=\"Atributo8\" Valor=\"\"/>\n\t</DatosAdicionales>\n\t<ext:UBLExtensions>\n        <ext:UBLExtension>\n        </ext:UBLExtension>\n    </ext:UBLExtensions>\n</DocumentoGenerico>",
+											"type": "text"
+										},
+										{
+											"key": "",
+											"type": "file",
+											"src": "/C:/Users/gtorres/Downloads/RCA10017000001820028.pdf"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{Uri}}/PLColab.Issue/Issue/UBL",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Issue",
+										"Issue",
+										"UBL"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Detalle de trazabilidad",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiIxIiwiY2NvZCI6IkNPIiwicmVnIjoiMTMiLCJjaXR5IjoiMTMwMDEiLCJhZGRyIjoiTWFuZ2EiLCJ0YXgiOiJOT0lWQSIsIm1haWwiOiJkaXN0cmlidWNpb25lc2ZsdWpvQGRpc3Bvc3RhYmxlLmNvbSIsImlzd2ViIjoiRmFsc2UiLCJwaSI6IiIsInB0aWQiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJwaG9uZSI6IjMxMjEyMzQ1NjciLCJuYmYiOjE2MzUyODcxNzksImV4cCI6MTY0MzIzNTk3OSwiaWF0IjoxNjM1Mjg3MTc5LCJpc3MiOiJwbGNvbGFiLWFwaS0ycWEuYXp1cmV3ZWJzaXRlcy5uZXQifQ.uA8ZUCq5d0HpEB7xOxSlRAj01VFuSz5rWE-SFJr0pyQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Documents/Document/Status/Auditoria_GenericStatusMail/DOCUMENTO-GENERICO(806008301;RCA10017000001820072;2021-11-04;PRINCIPAL;PRINCIPAL)/Outbound",
+									"protocol": "https",
+									"host": [
+										"plcolab-api-2qa",
+										"azurewebsites",
+										"net"
+									],
+									"path": [
+										"PLColab.Documents",
+										"Document",
+										"Status",
+										"Auditoria_GenericStatusMail",
+										"DOCUMENTO-GENERICO(806008301;RCA10017000001820072;2021-11-04;PRINCIPAL;PRINCIPAL)",
+										"Outbound"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Visor publico",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYmI2YzVhNi04ZmQ4LTRlNDItYTcxMS1hZDNjMDEzNTU4NmMiLCJuYW1lIjoiMTE0MDg3MTA1OSIsImRlc2MiOiJLZXZpbiBNb3JhbGVzIiwidXNyIjoiMTE0MDg3MTA1OSIsIjNpZCI6IjExNDA4NzEwNTkiLCIzbmFtZSI6IktldmluIiwiY2NvZCI6IkNPIiwicmVnIjoiMDUiLCJjaXR5IjoiMDUwNzkwMTMiLCJhZGRyIjoiS3JhIDI2YzcgIyA3MyIsInRheCI6Ik5PSVZBIiwibWFpbCI6ImtldmlubW9yYWxlc0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMDE1OTk4NjYzIiwibmJmIjoxNjMxMTE4MjYxLCJleHAiOjE2Mzg5ODA2NjEsImlhdCI6MTYzMTExODI2MSwiaXNzIjoicGxjb2xhYmFwaS0zYmV0YS5kbm5kZXYubWUifQ.CUWWB4jsUqygISsOd84z7Pma3Xmho4lzRzVXBV1jVEU",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Get/DOCUMENTO-GENERICO(1140871059;RCA1001700000182605;2021-09-13;PRINCIPAL;PRINCIPAL)",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Get",
+										"DOCUMENTO-GENERICO(1140871059;RCA1001700000182605;2021-09-13;PRINCIPAL;PRINCIPAL)"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Document/Get/DOCUMENTO-GENERICO",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{LH}}/PLColab.Documents/Document//DOCUMENTO-GENERICO(1140871059;RCA1001700000182596;2021-08-31;PRINCIPAL;PRINCIPAL)",
+									"host": [
+										"{{LH}}"
+									],
+									"path": [
+										"PLColab.Documents",
+										"Document",
+										"",
+										"DOCUMENTO-GENERICO(1140871059;RCA1001700000182596;2021-08-31;PRINCIPAL;PRINCIPAL)"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generico json",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/xml"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "REQUEST-ID",
+										"value": "cfe1544f-acc5-42f3-9ac0-af788b4c9b5d"
+									},
+									{
+										"key": "X-REF-DOCUMENTTYPE",
+										"value": "DOCUMENTO-GENERICO"
+									},
+									{
+										"key": "X-REF-BRANCH",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-REF-PROCESS",
+										"value": "PRINCIPAL"
+									},
+									{
+										"key": "X-TRACE",
+										"value": "True"
+									},
+									{
+										"key": "X-TESTING-DIANRULE",
+										"value": "Regla: 90, Rechazo: Documento procesado anteriormente."
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyN2YyMDdjOC1mOTBlLTRmYmQtOTMwYy1hZGZkMDEwNTY3ZTEiLCJuYW1lIjoiOTAwMTI0Nzg1IiwiZGVzYyI6IkFsIHNhYm9yIGRlbCBzb24gU0EiLCJ1c3IiOiI5MDAxMjQ3ODUiLCIzaWQiOiI5MDAxMjQ3ODUiLCIzbmFtZSI6IkFsIHNhYm9yIGRlbCBzb24gU0EiLCJjY29kIjoiQ08iLCJyZWciOiIxMyIsImNpdHkiOiIxMzAwMSIsImFkZHIiOiJEaWFnb25hbCIsInRheCI6Ik5PSVZBIiwibWFpbCI6IjkwMDEyNDc4NUB5b3BtYWlsLmNvbSIsImlzd2ViIjoiRmFsc2UiLCJwaSI6IiIsInB0aWQiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJwaG9uZSI6IjMyMTU4NzQ2OTIiLCJuYmYiOjE2NDg2NjgyNTcsImV4cCI6MTY1NjYxNzA1NywiaWF0IjoxNjQ4NjY4MjU3LCJpc3MiOiJwbGNvbGFiYXBpLTNiZXRhLmRubmRldi5tZSJ9.z2fKsQF_beSMqsNxGX0dvxFDWwvfB-13_MVXCdWcVEs"
+									},
+									{
+										"key": "X-GRAPHIC-REPRESENTATION-ATTACHED",
+										"value": "1"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"DocumentosRelacionados\": [{\n            \"Documento\": {\n                \"TipoDocumento\": \"Documento-sprsp\",\n                \"EspacioDeNombresDelContrato\": \"girosyfinanzas.com\",\n                \"FechaDocumento\": \"2021-12-17T14:43:06.983Z\",\n                \"NumeroDocumento\": \"a6748547-90de-4e7f-be5d-ca69acd489af\"\n            }\n        }\n    ],\n    \"Documento\": {\n        \"TipoDocumento\": \"Documento-sprsp\",\n        \"XmlDocumento\": \"<indices> <indice campo=\\\"Tipo_documento\\\" valor=\\\"CC\\\"/> <indice campo=\\\"Numero_documento\\\" valor=\\\"VCA_4449594_2022-03-30T14:46:59.000Z\\\"/> <indice campo=\\\"Tipo_operacion\\\" valor=\\\"10\\\"/> <indice campo=\\\"Identificador_operacion\\\" valor=\\\"2449594\\\"/> <indice campo=\\\"Fecha_operacion\\\" valor=\\\"2022-03-30T14:46:59.000Z\\\"/> <indice campo=\\\"Numero_producto\\\" valor=\\\"1093795045\\\"/> <indice campo=\\\"Usuario_cajero\\\" valor=\\\"1116785947\\\"/> <indice campo=\\\"Numero_agencia\\\" valor=\\\"00202\\\"/> <indice campo=\\\"Entidad\\\" valor=\\\"GYF001\\\"/> <indice campo=\\\"Canal\\\" valor=\\\"010\\\"/> <indice campo=\\\"Regional\\\" valor=\\\"\\\"/> <indice campo=\\\"Tipo_formulario\\\" valor=\\\"62500\\\"/> <indice campo=\\\"Pais_origen\\\" valor=\\\"CO\\\"/> <indice campo=\\\"Pais_destino\\\" valor=\\\"CO\\\"/> <indice campo=\\\"Ciudad_origen\\\" valor=\\\"76001\\\"/> <indice campo=\\\"Ciudad_destino\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo1\\\" valor=\\\"2449594013\\\"/> <indice campo=\\\"Atributo2\\\" valor=\\\"1093795045\\\"/> <indice campo=\\\"Atributo3\\\" valor=\\\"SBS1\\\"/> <indice campo=\\\"Atributo4\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo5\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo6\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo7\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo8\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo9\\\" valor=\\\"\\\"/> <indice campo=\\\"Atributo10\\\" valor=\\\"\\\"/> <indice campo=\\\"SOURCE_SYSTEM\\\" valor=\\\"SIIF\\\"/></indices>\"\n    },\n    \"Contrato\": {\n        \"EspacioDeNombres\": \"girosyfinanzas.com\",\n        \"Id\": 0,\n        \"Token\": \"c213499eb6cd420885612337edb5e5fcd38ffea7075547c2b27a9f7d73e8de94\"\n    },\n    \"Binario\": {\n        \"Metadatos\": {\n            \"FechaModificacion\": \"2022-03-30T14:46:59.000Z\",\n            \"NombreArchivo\": \"VCA_4449594_2022-03-30T14:46:59.000Z\",\n            \"TipoMime\": \"application/pdf\",\n            \"Extension\": \"pdf\",\n            \"FechaCreacion\": \"2022-03-30T14:46:59.000Z\",\n            \"Version\": 0\n        },\n        \"DatosBinario\": \"\"\n    }\n}\n"
+								},
+								"url": {
+									"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Issue/Issue/JSON",
+									"protocol": "https",
+									"host": [
+										"plcolab-api-2qa",
+										"azurewebsites",
+										"net"
+									],
+									"path": [
+										"PLColab.Issue",
+										"Issue",
+										"JSON"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Subtipo de documento Copy",
+					"item": [
+						{
+							"name": "Eliminar subtipo",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiJEaXN0cmlidWNpb25lcyBGbHVqbyBTLkEuUyIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6Ik1hbmdhIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoiZGlzdHJpYnVjaW9uZXNmbHVqb0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMTIxMjM0NTY3IiwibmJmIjoxNjMyMzE1NDQxLCJleHAiOjE2NDAxNzc4NDEsImlhdCI6MTYzMjMxNTQ0MSwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.L-037joBqe2kaOEnGX98EoFN2FcsnwT7IpZzmyNAjZ4",
+										"type": "text"
+									},
+									{
+										"key": "X-TRACE",
+										"value": "True",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Delete/DOCUMENTO-Distribuciones3",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Delete",
+										"DOCUMENTO-Distribuciones3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiJEaXN0cmlidWNpb25lcyBGbHVqbyBTLkEuUyIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6Ik1hbmdhIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoiZGlzdHJpYnVjaW9uZXNmbHVqb0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMTIxMjM0NTY3IiwibmJmIjoxNjMxNzQyODc4LCJleHAiOjE2Mzk2MDUyNzgsImlhdCI6MTYzMTc0Mjg3OCwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.a5i2DegpHtMYlhJCEuzEuVQs3GKV2RS-vspUHT8vzWk",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\":\"DOCUMENTO-Distribuciones3\",        \r\n\t\"description\":\"Distribuciones los explotados\",\r\n\t\"pdfWithTimestamp\":1,\r\n\t\"pdfWithPassword\":1,\r\n\t\"smsNotification\":1,\r\n\t\"emailNotification\":1,\r\n\t\"pdfWithExpirationLink\":1,\r\n    \"enabled\":1,\r\n\t\"daysToExpiration\":10\r\n}"
+								},
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Put",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Put"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxYmI2YzVhNi04ZmQ4LTRlNDItYTcxMS1hZDNjMDEzNTU4NmMiLCJuYW1lIjoiMTE0MDg3MTA1OSIsImRlc2MiOiJLZXZpbiBNb3JhbGVzIiwidXNyIjoiMTE0MDg3MTA1OSIsIjNpZCI6IjExNDA4NzEwNTkiLCIzbmFtZSI6IktldmluIiwiY2NvZCI6IkNPIiwicmVnIjoiMDUiLCJjaXR5IjoiMDUxOTcwMDEiLCJhZGRyIjoiS3JhIDI2YzcgIyA3MyIsInRheCI6Ik5PSVZBIiwibWFpbCI6ImtldmlubW9yYWxlc0B5b3BtYWlsLmNvbSIsImlzd2ViIjoiRmFsc2UiLCJwaSI6IiIsInB0aWQiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJwaG9uZSI6IjMwMTU5OTg2NjUiLCJuYmYiOjE2MzIzMTQ5NzMsImV4cCI6MTY0MDE3NzM3MywiaWF0IjoxNjMyMzE0OTczLCJpc3MiOiJwbGNvbGFiLWFwaS0ycWEuYXp1cmV3ZWJzaXRlcy5uZXQifQ.zcXBPxRjwyqThRLi_GXd7phqnZuXG5aWoXpn07dWpIw",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Get?pageIndex=1&pageSize=10",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Get"
+									],
+									"query": [
+										{
+											"key": "pageIndex",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Guardar",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiJEaXN0cmlidWNpb25lcyBGbHVqbyBTLkEuUyIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6Ik1hbmdhIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoiZGlzdHJpYnVjaW9uZXNmbHVqb0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMTIxMjM0NTY3IiwibmJmIjoxNjMyMzE0ODM2LCJleHAiOjE2NDAxNzcyMzYsImlhdCI6MTYzMjMxNDgzNiwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.ZQQgce5lSaiU8czXDD-dALtlYxSeIdVkH7fA6zYqCsM",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"code\":\"DOCUMENTO-Distribuciones3\",        \r\n\t\"description\":\"Distribuciones del flujo SAS\",\r\n\t\"pdfWithTimestamp\":1,\r\n\t\"pdfWithPassword\":1,\r\n\t\"smsNotification\":1,\r\n\t\"emailNotification\":1,\r\n\t\"pdfWithExpirationLink\":1,\r\n    \"enabled\":1,\r\n\t\"daysToExpiration\":3\r\n}"
+								},
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Post",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activar/Desactivar",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM1YjZhMi00OGIxLTQyYjktYjNkOS1hZDk2MDEzY2Q4NzkiLCJuYW1lIjoiODA2MDA4MzAxIiwiZGVzYyI6IkRpc3RyaWJ1Y2lvbmVzIEZsdWpvIFMuQS5TIiwidXNyIjoiODA2MDA4MzAxIiwiM2lkIjoiODA2MDA4MzAxIiwiM25hbWUiOiJEaXN0cmlidWNpb25lcyBGbHVqbyBTLkEuUyIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6Ik1hbmdhIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoiZGlzdHJpYnVjaW9uZXNmbHVqb0BkaXNwb3N0YWJsZS5jb20iLCJpc3dlYiI6IkZhbHNlIiwicGkiOiIiLCJwdGlkIjoiZmFjYjk1ZGYtMWIzMy00MDViLTk1YTktYTc2NzAwZTFmNWJkIiwicGhvbmUiOiIzMTIxMjM0NTY3IiwibmJmIjoxNjMxNzQyODc4LCJleHAiOjE2Mzk2MDUyNzgsImlhdCI6MTYzMTc0Mjg3OCwiaXNzIjoicGxjb2xhYi1hcGktMnFhLmF6dXJld2Vic2l0ZXMubmV0In0.a5i2DegpHtMYlhJCEuzEuVQs3GKV2RS-vspUHT8vzWk",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{Uri}}/PLColab.Generic/Documents/Patch/DOCUMENTO-Distribuciones2/True",
+									"host": [
+										"{{Uri}}"
+									],
+									"path": [
+										"PLColab.Generic",
+										"Documents",
+										"Patch",
+										"DOCUMENTO-Distribuciones2",
+										"True"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Nómina",
+			"item": [
+				{
+					"name": "NotaReemplazoNomina_FINAL Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/xml"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiOGUyZTlhYS00NDc3LTRmMGYtODM0Yy1hYzk0MDE0NTMxM2UiLCJuYW1lIjoiODI1MjUyNTIzMzMiLCJkZXNjIjoiTUFOVUVMIEhJR1VFUkEiLCJ1c3IiOiI4MjUyNTI1MjMzMyIsIjNpZCI6IjgyNTI1MjUyMzMzIiwiM25hbWUiOiJNQU5VRUwiLCJjY29kIjoiQ08iLCJyZWciOiIxNSIsImNpdHkiOiIxNTQyNTAwMSIsImFkZHIiOiJNYW5nYSIsInRheCI6IklNUElWQSIsIm1haWwiOiJtaGlndWVyYUB5b3BtYWlsLmNvbSIsImlzd2ViIjoiRmFsc2UiLCJwaSI6IiIsInB0aWQiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJwaG9uZSI6IjMxMDIyMDUyMjUiLCJuYmYiOjE2MjE1MTU0NjMsImV4cCI6MTYyOTQ2NDI2MywiaWF0IjoxNjIxNTE1NDYzLCJpc3MiOiJhcGktYmV0YS5mYWN0dXJlLmNvIn0.wuXsZ9JUBR8ldVgXRGprkrsRG_WtETf2793yVsqCqMc"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"type": "text",
+								"value": "NA-NOMINA-ELECTRONICA"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"type": "text",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"type": "text",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"type": "text",
+								"value": "True",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"type": "text",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"type": "text",
+								"value": "FACTURA-UBL",
+								"disabled": true
+							},
+							{
+								"key": "X-ASYNC",
+								"type": "text",
+								"value": "false",
+								"disabled": true
+							},
+							{
+								"key": "REQUEST-ID",
+								"type": "text",
+								"value": "{{$guid}}"
+							},
+							{
+								"key": "X-TRACE",
+								"type": "text",
+								"value": "True"
+							},
+							{
+								"key": "X-REF-THIRDPARTY",
+								"type": "text",
+								"value": "1143381522"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<NotaReemplazoNomina>\r\n    <Cabecera CodigoTrabajador=\"C001\" Prefijo=\"NAR\" Consecutivo=\"10\" Numero=\"NAR10\" FechaEmision=\"2021-07-08\" HoraEmision=\"07:30:00-05:00\" PeriodoNomina=\"5\" TipoMoneda=\"COP\" TRM=\"\" FechaIngreso=\"2017-06-01\" FechaRetiro=\"\" FechaLiquidacionInicio=\"2021-01-01\" FechaLiquidacionFin=\"2021-01-31\" TiempoLaborado=\"1305\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Idioma=\"es\" Novedad=\"false\"  Ambiente=\"2\" />\r\n    <Observaciones>\r\n        <Observacion>Prueba de nómina de salario superior al mínimo con incapacidad laboral</Observacion>\r\n    </Observaciones>\r\n    <DocumentoRelacionado Numero=\"SPNE77\" CUNE=\"a478d9313d77fa1324a4b741971f50686090b361e93f01e4a363895879ef9f3f38c2af57f4d003be0f2a639af372440d\" FechaEmision=\"2021-07-08\" />\r\n    <Emisor RazonSocial=\"FACTURE SAS\" PrimerApellido=\"FACTURE SAS\" SegundoApellido=\"\" PrimerNombre=\"FACTURE SAS\" OtrosNombres=\"FACTURE SAS\" NIT=\"900399741\" DV=\"7\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Direccion=\"Pie del cerro #58-21\" />\r\n    <Trabajador TipoTrabajador=\"01\" SubTipoTrabajador=\"00\" AltoRiesgoPension=\"false\" TipoDocumento=\"13\" NumeroDocumento=\"1047408963\" PrimerApellido=\"OROZCO\" SegundoApellido=\"HENAO\" PrimerNombre=\"ROIME\" OtrosNombres=\"YECID\" SalarioIntegral=\"false\" TipoContrato=\"2\" Sueldo=\"908526.00\" CodigoTrabajador=\"CO01\" LugarTrabajoPais=\"CO\" LugarTrabajoDepartamento=\"13\" LugarTrabajoCiudad=\"13001\" LugarTrabajoDireccion=\"Pie del Cerro\" />\r\n    <DatosDelPago Forma=\"1\" Metodo=\"47\" Banco=\"Bancolombia\" TipoCuenta=\"Ahorro\" NumeroCuenta=\"12345678\" />\r\n    <FechasPagosNomina>\r\n        <FechaPago Fecha=\"2021-01-31\" />\r\n    </FechasPagosNomina>\r\n    <Devengados DiasTrabajados=\"20\" SueldoTrabajado=\"1333333.33\" Dotacion=\"\" ApoyoASostenimiento=\"\" Teletrabajo=\"\" Retiro=\"\" Indemnizacion=\"\" Reintegro=\"\" >\r\n        <Incapacidades>\r\n            <Incapacidad FechaInicio=\"2021-01-01\" FechaFin=\"2021-01-10\" Cantidad=\"10\" Tipo=\"2\" Pago=\"666666.67\" />\r\n        </Incapacidades>\r\n    </Devengados>\r\n    <Deducciones PensionVoluntaria=\"\" RetencionFuente=\"\" AFC=\"\" Cooperativa=\"\" EmbargoFiscal=\"\" PlanesComplementarios=\"\" Educacion=\"\" Reintegro=\"\" Deuda=\"\" >\r\n        <Salud Porcentaje=\"4.00\" Deduccion=\"80000.00\" />\r\n        <FondoPension Porcentaje=\"4.00\" Deduccion=\"80000.00\" />\r\n    </Deducciones>\r\n    <Totales Redondeo=\"\" Devengados=\"2000000.00\" Deducciones=\"160000.00\" TotalComprobante=\"1840000.00\" />   \r\n</NotaReemplazoNomina>"
+						},
+						"url": {
+							"raw": "{{Uri}}/PLColab.Issue/Issue/XML3",
+							"host": [
+								"{{Uri}}"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NotaEliminarNomina_FINAL Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiOGUyZTlhYS00NDc3LTRmMGYtODM0Yy1hYzk0MDE0NTMxM2UiLCJuYW1lIjoiODI1MjUyNTIzMzMiLCJkZXNjIjoiTUFOVUVMIEhJR1VFUkEiLCJ1c3IiOiI4MjUyNTI1MjMzMyIsIjNpZCI6IjgyNTI1MjUyMzMzIiwiM25hbWUiOiJNQU5VRUwiLCJjY29kIjoiQ08iLCJyZWciOiIxNSIsImNpdHkiOiIxNTQyNTAwMSIsImFkZHIiOiJNYW5nYSIsInRheCI6IklNUElWQSIsIm1haWwiOiJtaGlndWVyYUB5b3BtYWlsLmNvbSIsImlzd2ViIjoiRmFsc2UiLCJwaSI6IiIsInB0aWQiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJwaG9uZSI6IjMxMDIyMDUyMjUiLCJuYmYiOjE2MjE1MTU0NjMsImV4cCI6MTYyOTQ2NDI2MywiaWF0IjoxNjIxNTE1NDYzLCJpc3MiOiJhcGktYmV0YS5mYWN0dXJlLmNvIn0.wuXsZ9JUBR8ldVgXRGprkrsRG_WtETf2793yVsqCqMc",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "NE-NOMINA-ELECTRONICA",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"value": "FACTURA-UBL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-ASYNC",
+								"value": "false",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}",
+								"type": "text"
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-THIRDPARTY",
+								"value": "1143381522",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<NotaEliminacionNomina>\r\n<Cabecera CodigoTrabajador=\"C001\" Prefijo=\"NAE\" Consecutivo=\"14\" Numero=\"NAE14\" FechaEmision=\"2021-07-08\" HoraEmision=\"07:30:00-05:00\" PeriodoNomina=\"5\" TipoMoneda=\"COP\" TRM=\"\" FechaIngreso=\"2017-06-01\" FechaRetiro=\"\" FechaLiquidacionInicio=\"2021-01-01\" FechaLiquidacionFin=\"2021-01-31\" TiempoLaborado=\"1305\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Idioma=\"es\" Novedad=\"false\" Ambiente=\"2\" />\r\n<Observaciones>\r\n<Observacion>Prueba de nómina de salario superior al mínimo con incapacidad laboral</Observacion>\r\n</Observaciones>\r\n<DocumentoRelacionado Numero=\"SPNE77\" CUNE=\"a478d9313d77fa1324a4b741971f50686090b361e93f01e4a363895879ef9f3f38c2af57f4d003be0f2a639af372440d\" FechaEmision=\"2021-02-05\" />\r\n<Emisor RazonSocial=\"FACTURE SAS\" PrimerApellido=\"\" SegundoApellido=\"\" PrimerNombre=\"FACTURE SAS\" OtrosNombres=\"\" NIT=\"900399741\" DV=\"7\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Direccion=\"Pie del cerro #58-21\" />\r\n<Trabajador TipoTrabajador=\"01\" SubTipoTrabajador=\"00\" AltoRiesgoPension=\"false\" TipoDocumento=\"13\" NumeroDocumento=\"1047408963\" PrimerApellido=\"OROZCO\" SegundoApellido=\"HENAO\" PrimerNombre=\"ROIME\" OtrosNombres=\"YECID\" SalarioIntegral=\"false\" TipoContrato=\"2\" Sueldo=\"908526.00\" CodigoTrabajador=\"CO01\" LugarTrabajoPais=\"CO\" LugarTrabajoDepartamento=\"13\" LugarTrabajoCiudad=\"13001\" LugarTrabajoDireccion=\"Pie del Cerro\" />\r\n<DatosDelPago Forma=\"1\" Metodo=\"47\" Banco=\"Bancolombia\" TipoCuenta=\"Ahorro\" NumeroCuenta=\"12345678\" />\r\n</NotaEliminacionNomina>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Uri}}/PLColab.Issue/Issue/XML3",
+							"host": [
+								"{{Uri}}"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nomina (Soporte de pago) listo Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJuYW1lIjoiOTAwMzk5NzQxIiwiZGVzYyI6IkZBQ1RVUkUgUy5BLlMuIiwidXNyIjoiOTAwMzk5NzQxIiwiM2lkIjoiOTAwMzk5NzQxIiwiM25hbWUiOiJGQUNUVVJFIFMuQS5TLiIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6IlBpZSBkZWwgQ2Vycm8gQ2FsbGUgMzAgTm8gMTctMzYuIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoia21vcmFsZXNAZmFjdHVyZWNvbG9tYmlhLmNvIiwiaXN3ZWIiOiJGYWxzZSIsInBpIjoiIiwicGhvbmUiOiIzMDA2NjUxMjM0IiwibmJmIjoxNjMzNjk5NjY4LCJleHAiOjE2NjUyMzU2NjgsImlhdCI6MTYzMzY5OTY2OCwiaXNzIjoiYXBpLWJldGEuZmFjdHVyZS5jbyJ9.8QiqywYa6c2bIhBXpxJUOjf6JhS5_yJDZ4rUJ1oNg08",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "NOMINA-ELECTRONICA",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"value": "FACTURA-UBL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-ASYNC",
+								"value": "false",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}",
+								"type": "text"
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-THIRDPARTY",
+								"value": "1143381522",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<Nomina>\r\n\t<Cabecera CodigoTrabajador=\"9876\" Prefijo=\"\" Consecutivo=\"936\" Numero=\"936\" FechaEmision=\"2022-04-07\" HoraEmision=\"16:47:01\" PeriodoNomina=\"5\" TipoMoneda=\"COP\" FechaIngreso=\"2021-08-30\" FechaRetiro=\"2021-08-30\" FechaLiquidacionInicio=\"2021-09-01\" FechaLiquidacionFin=\"2021-09-30\" TiempoLaborado=\"31\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Idioma=\"es\" Novedad=\"false\" TipoNota=\"\" CUNENovedad=\"\" Ambiente=\"2\"/>\r\n\t<Notificaciones>\r\n\t\t<Notificacion Tipo=\"Mail\" Para=\"00@yopmail.com\"/>\r\n\t\t<Notificacion Tipo=\"SMS\" Para=\"314589672\"/>\r\n\t</Notificaciones>\r\n\t<Observaciones/>\r\n\t<Emisor RazonSocial=\"Facture SAS\" PrimerApellido=\"\" SegundoApellido=\"\" PrimerNombre=\"\" NIT=\"900399741\" DV=\"7\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Direccion=\"Manga\"/>\r\n\t<Extensiones>\r\n\t\t<Interoperabilidad/>\r\n\t</Extensiones>\r\n\t<Trabajador TipoTrabajador=\"12\" SubTipoTrabajador=\"01\" AltoRiesgoPension=\"true\" TipoDocumento=\"22\" NumeroDocumento=\"9875496321\" PrimerApellido=\"Bolaño\" SegundoApellido=\"Martinez\" PrimerNombre=\"Pedro\" OtrosNombres=\"Manuel\" SalarioIntegral=\"true\" TipoContrato=\"4\" Sueldo=\"150000\" CodigoTrabajador=\"987\" LugarTrabajoPais=\"CO\" LugarTrabajoDepartamento=\"13\" LugarTrabajoCiudad=\"13001\" LugarTrabajoDireccion=\"Diagonal 45\"/>\r\n\t<DatosDelPago Forma=\"1\" Metodo=\"9\" Banco=\"Agrario\" TipoCuenta=\"987\" NumeroCuenta=\"9875624321\"/>\r\n\t<FechasPagosNomina>\r\n\t\t<FechaPago Fecha=\"2021-09-30\"/>\r\n\t</FechasPagosNomina>\r\n\t<Devengados DiasTrabajados=\"30\" SueldoTrabajado=\"150000\" ApoyoASostenimiento=\"0\">\r\n\t\t<Transportes/>\r\n\t\t<HorasExtrasDiarias/>\r\n\t\t<HorasExtrasNocturnas/>\r\n\t\t<HorasRecargosNocturnos/>\r\n\t\t<HorasExtrasDiarasDominicalesYFestivas/>\r\n\t\t<HorasRecargosDiariasDominicalesYFestivas/>\r\n\t\t<HorasExtrasNocturnasDominicalesYFestivas/>\r\n\t\t<HorasRecargoNocturnoDominicalesYFestivas/>\r\n\t\t<VacacionesComunes/>\r\n\t\t<VacacionesCompensadas/>\r\n\t\t<Primas/>\r\n\t\t<Cesantias/>\r\n\t\t<Incapacidades/>\r\n\t\t<Licencias>\r\n\t\t\t<LicenciasMaternidadOPaternidad/>\r\n\t\t\t<LicenciasRemuneradas/>\r\n\t\t\t<LicenciasNoRemuneradas/>\r\n\t\t</Licencias>\r\n\t\t<Bonificaciones/>\r\n\t\t<Auxilios/>\r\n\t\t<HuelgasLegales/>\r\n\t\t<OtrosConceptos/>\r\n\t\t<Compensaciones/>\r\n\t\t<BonosEPCTV/>\r\n\t\t<Comisiones/>\r\n\t\t<PagosTerceros/>\r\n\t\t<Anticipos/>\r\n\t</Devengados>\r\n\t<Deducciones PensionVoluntaria=\"0\" RetencionFuente=\"0\" AFC=\"0\" Cooperativa=\"0\" EmbargoFiscal=\"0\" PlanesComplementarios=\"0\" Educacion=\"0\" Reintegro=\"0\" Deuda=\"0\">\r\n\t\t<Salud Porcentaje=\"0.04\" Deduccion=\"6000\"/>\r\n\t\t<FondoPension Porcentaje=\"0.04\" Deduccion=\"6000\"/>\r\n\t\t<FondoSeguridadPensional DeduccionSeguridadPensional=\"0\" DeduccionSubsistencia=\"0\"/>\r\n\t\t<Sindicatos/>\r\n\t\t<Sanciones/>\r\n\t\t<Libranzas/>\r\n\t\t<PagosTerceros/>\r\n\t\t<Anticipos/>\r\n\t\t<OtrasDeducciones/>\r\n\t</Deducciones>\r\n\t<Totales Redondeo=\"0\" Devengados=\"150000\" Deducciones=\"12000\" TotalComprobante=\"138000\"/>\r\n</Nomina>"
+						},
+						"url": {
+							"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Issue/Issue/XML3",
+							"protocol": "https",
+							"host": [
+								"plcolab-api-2qa",
+								"azurewebsites",
+								"net"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NOVEDAD-NÓMINA",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWNiOTVkZi0xYjMzLTQwNWItOTVhOS1hNzY3MDBlMWY1YmQiLCJuYW1lIjoiOTAwMzk5NzQxIiwiZGVzYyI6IkZBQ1RVUkUgUy5BLlMuIiwidXNyIjoiOTAwMzk5NzQxIiwiM2lkIjoiOTAwMzk5NzQxIiwiM25hbWUiOiJGQUNUVVJFIFMuQS5TLiIsImNjb2QiOiJDTyIsInJlZyI6IjEzIiwiY2l0eSI6IjEzMDAxIiwiYWRkciI6IlBpZSBkZWwgQ2Vycm8gQ2FsbGUgMzAgTm8gMTctMzYuIiwidGF4IjoiTk9JVkEiLCJtYWlsIjoia21vcmFsZXNAZmFjdHVyZWNvbG9tYmlhLmNvIiwiaXN3ZWIiOiJGYWxzZSIsInBpIjoiIiwicGhvbmUiOiIzMDA2NjUxMjM0IiwibmJmIjoxNjMzNjk5NjY4LCJleHAiOjE2NjUyMzU2NjgsImlhdCI6MTYzMzY5OTY2OCwiaXNzIjoiYXBpLWJldGEuZmFjdHVyZS5jbyJ9.8QiqywYa6c2bIhBXpxJUOjf6JhS5_yJDZ4rUJ1oNg08",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "NOMINA-ELECTRONICA",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"value": "FACTURA-UBL",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-ASYNC",
+								"value": "false",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}",
+								"type": "text"
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"type": "text"
+							},
+							{
+								"key": "X-REF-THIRDPARTY",
+								"value": "1143381522",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<Nomina>\r\n\t<Cabecera CodigoTrabajador=\"9876\" Prefijo=\"\" Consecutivo=\"936\" Numero=\"936\" FechaEmision=\"2022-04-07\" HoraEmision=\"16:47:01\" PeriodoNomina=\"5\" TipoMoneda=\"COP\" FechaIngreso=\"2021-08-30\" FechaRetiro=\"2021-08-30\" FechaLiquidacionInicio=\"2021-09-01\" FechaLiquidacionFin=\"2021-09-30\" TiempoLaborado=\"31\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Idioma=\"es\" Novedad=\"True\" TipoNota=\"\" CUNENovedad=\"Aquí va el cune de la que le va a realizar la novedad\" Ambiente=\"2\"/>\r\n\t<Notificaciones>\r\n\t\t<Notificacion Tipo=\"Mail\" Para=\"00@yopmail.com\"/>\r\n\t\t<Notificacion Tipo=\"SMS\" Para=\"314589672\"/>\r\n\t</Notificaciones>\r\n\t<Observaciones/>\r\n\t<Emisor RazonSocial=\"Facture SAS\" PrimerApellido=\"\" SegundoApellido=\"\" PrimerNombre=\"\" NIT=\"900399741\" DV=\"7\" Pais=\"CO\" Departamento=\"13\" Ciudad=\"13001\" Direccion=\"Manga\"/>\r\n\t<Extensiones>\r\n\t\t<Interoperabilidad/>\r\n\t</Extensiones>\r\n\t<Trabajador TipoTrabajador=\"12\" SubTipoTrabajador=\"01\" AltoRiesgoPension=\"true\" TipoDocumento=\"22\" NumeroDocumento=\"9875496321\" PrimerApellido=\"Bolaño\" SegundoApellido=\"Martinez\" PrimerNombre=\"Pedro\" OtrosNombres=\"Manuel\" SalarioIntegral=\"true\" TipoContrato=\"4\" Sueldo=\"150000\" CodigoTrabajador=\"987\" LugarTrabajoPais=\"CO\" LugarTrabajoDepartamento=\"13\" LugarTrabajoCiudad=\"13001\" LugarTrabajoDireccion=\"Diagonal 45\"/>\r\n\t<DatosDelPago Forma=\"1\" Metodo=\"9\" Banco=\"Agrario\" TipoCuenta=\"987\" NumeroCuenta=\"9875624321\"/>\r\n\t<FechasPagosNomina>\r\n\t\t<FechaPago Fecha=\"2021-09-30\"/>\r\n\t</FechasPagosNomina>\r\n\t<Devengados DiasTrabajados=\"30\" SueldoTrabajado=\"150000\" ApoyoASostenimiento=\"0\">\r\n\t\t<Transportes/>\r\n\t\t<HorasExtrasDiarias/>\r\n\t\t<HorasExtrasNocturnas/>\r\n\t\t<HorasRecargosNocturnos/>\r\n\t\t<HorasExtrasDiarasDominicalesYFestivas/>\r\n\t\t<HorasRecargosDiariasDominicalesYFestivas/>\r\n\t\t<HorasExtrasNocturnasDominicalesYFestivas/>\r\n\t\t<HorasRecargoNocturnoDominicalesYFestivas/>\r\n\t\t<VacacionesComunes/>\r\n\t\t<VacacionesCompensadas/>\r\n\t\t<Primas/>\r\n\t\t<Cesantias/>\r\n\t\t<Incapacidades/>\r\n\t\t<Licencias>\r\n\t\t\t<LicenciasMaternidadOPaternidad/>\r\n\t\t\t<LicenciasRemuneradas/>\r\n\t\t\t<LicenciasNoRemuneradas/>\r\n\t\t</Licencias>\r\n\t\t<Bonificaciones/>\r\n\t\t<Auxilios/>\r\n\t\t<HuelgasLegales/>\r\n\t\t<OtrosConceptos/>\r\n\t\t<Compensaciones/>\r\n\t\t<BonosEPCTV/>\r\n\t\t<Comisiones/>\r\n\t\t<PagosTerceros/>\r\n\t\t<Anticipos/>\r\n\t</Devengados>\r\n\t<Deducciones PensionVoluntaria=\"0\" RetencionFuente=\"0\" AFC=\"0\" Cooperativa=\"0\" EmbargoFiscal=\"0\" PlanesComplementarios=\"0\" Educacion=\"0\" Reintegro=\"0\" Deuda=\"0\">\r\n\t\t<Salud Porcentaje=\"0.04\" Deduccion=\"6000\"/>\r\n\t\t<FondoPension Porcentaje=\"0.04\" Deduccion=\"6000\"/>\r\n\t\t<FondoSeguridadPensional DeduccionSeguridadPensional=\"0\" DeduccionSubsistencia=\"0\"/>\r\n\t\t<Sindicatos/>\r\n\t\t<Sanciones/>\r\n\t\t<Libranzas/>\r\n\t\t<PagosTerceros/>\r\n\t\t<Anticipos/>\r\n\t\t<OtrasDeducciones/>\r\n\t</Deducciones>\r\n\t<Totales Redondeo=\"0\" Devengados=\"150000\" Deducciones=\"12000\" TotalComprobante=\"138000\"/>\r\n</Nomina>"
+						},
+						"url": {
+							"raw": "{{Uri}}/PLColab.Issue/Issue/XML3",
+							"host": [
+								"{{Uri}}"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FV, NC, ND",
+			"item": [
+				{
+					"name": "FV-DIAN",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "FACTURA-UBL"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"
+							},
+							{
+								"key": "X-Who",
+								"value": "37fa544c02764ceeaa81d98b99415ebc"
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"value": "Ungerboeck"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<Factura>\r\n    <Cabecera Numero=\"SETT100065\" OrdenCompra=\"  \" FechaEmision=\"2022-02-08\" HoraEmision=\"11:05:05\" MonedaFactura=\"COP\" Observaciones=\" \" TipoFactura=\"01\" FormaDePago=\"2\" LineasDeFactura=\"1\" TipoOperacion=\"10\"/>\r\n    <NumeracionDIAN NumeroResolucion=\"18760000001\" FechaInicio=\"2019-01-19\" FechaFin=\"2030-01-19\" PrefijoNumeracion=\"SETT\" ConsecutivoInicial=\"1\" ConsecutivoFinal=\"5000000\"/>\r\n    <Emisor TipoPersona=\"1\" TipoRegimen=\"48\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"800112033\" DV=\"1\" RazonSocial=\"DOSQUEBRADAS\" NumeroMatriculaMercantil=\"19609\" NombreComercial=\"FERROLECTRICOS Y VARIEDADES LA 66\">\r\n        <Direccion CodigoMunicipio=\"66170\" NombreCiudad=\"DOSQUEBRADAS\" NombreDepartamento=\"Risaralda\" CodigoDepartamento=\"66\" Direccion=\"CL 8 9 46 URB EL ACERO LA POPA\"/>\r\n        <ObligacionesEmisor>\r\n            <CodigoObligacion>O-15</CodigoObligacion>\r\n        </ObligacionesEmisor>\r\n        <DireccionFiscal CodigoMunicipio=\"66170\" NombreCiudad=\"DOSQUEBRADAS\" NombreDepartamento=\"Risaralda\" CodigoDepartamento=\"66\" Direccion=\"CL 8 9 46 URB EL ACERO LA POPA\"/>\r\n        <TributoEmisor CodigoTributo=\"01\" NombreTributo=\"IVA\"/>\r\n        <Contacto Nombre=\"DOSQUEBRADAS\" Telefono=\"3116550\" Telfax=\" \" Email=\"pruebas@facturecolombia.com\" Notas=\" \"/>\r\n    </Emisor>\r\n       <Notificacion Tipo=\"Email\" De=\"\">\r\n        <Para>pruebas1@facturecolombia.com</Para>\r\n    </Notificacion>\r\n    <Cliente TipoPersona=\"2\" TipoRegimen=\"49\" TipoIdentificacion=\"13\" NumeroIdentificacion=\"900399741\" DV=\"7\" RazonSocial=\"JESUS ARTURO GOMEZ HOYOS\" NumeroMatriculaMercantil=\"19609\" NombreComercial=\"FERROLECTRICOS Y VARIEDADES LA 66\">\r\n        <Direccion CodigoMunicipio=\"66001\" NombreCiudad=\"PEREIRA\" CodigoPostal=\"66001\" NombreDepartamento=\"Risaralda\" CodigoDepartamento=\"66\" Direccion=\"CALLE 66  CRA 26 BIS ESQUINA CUBA\" CodigoPais=\"CO\" NombrePais=\"Colombia\" IdiomaPais=\"es\"/>\r\n        <ObligacionesCliente>\r\n            <CodigoObligacion>R-99-PN</CodigoObligacion>\r\n        </ObligacionesCliente>\r\n        <DireccionFiscal CodigoMunicipio=\"66001\" NombreCiudad=\"PEREIRA\" CodigoPostal=\"66001\" NombreDepartamento=\"Risaralda\" CodigoDepartamento=\"66\" Direccion=\"CALLE 66  CRA 26 BIS ESQUINA CUBA\" CodigoPais=\"CO\" NombrePais=\"Colombia\" IdiomaPais=\"es\"/>\r\n        <Contacto Nombre=\"JESUS ARTURO GOMEZ HOYOS\" Telefono=\"3137302773\" Telfax=\" \" Email=\"pruebas2@facturecolombia.com\" Notas=\" \"/>\r\n        <TributoCliente CodigoTributo=\"01\" NombreTributo=\"IVA\"/>\r\n    </Cliente>\r\n    <MediosDePago CodigoMedioPago=\"2\" FormaDePago=\"47\" Vencimiento=\"2021-12-11\">\r\n        <IdentificadorPago>\r\n            <ReferenciaPago>2</ReferenciaPago>\r\n        </IdentificadorPago>\r\n    </MediosDePago>\r\n    <Impuestos>\r\n        <Impuesto Valor=\"40215\" Tipo=\"01\" Nombre=\"IVA\">\r\n            <Subtotal ValorBase=\"211659\" Valor=\"40215\" Porcentaje=\"19.00\" ValorUnidadMedidaBase=\"94\" CodigoUnidadMedidaBase=\"\" ValorTributoXUnidad=\"\"/>\r\n        </Impuesto>\r\n    </Impuestos>\r\n    <Totales Bruto=\"211659\" BaseImponible=\"211659\" BrutoMasImpuestos=\"251874\" Cargos=\"0\" Descuentos=\"0\" Impuestos=\"40215\" Retenciones=\"0\" General=\"251874\" Anticipo=\"0\"/>\r\n    <Linea>\r\n        <Detalle NumeroLinea=\"1\" Cantidad=\"200\" UnidadMedida=\"94\" SubTotalLinea=\"211659\" Descripcion=\"Alambre cu THHN 14 Blanco Cent.\" CantidadBase=\"200\" UnidadCantidadBase=\"94\" PrecioUnitario=\"1058.2950\" ValorTotalItem=\"211659\"/>\r\n        <Impuestos>\r\n            <Impuesto Valor=\"40215\" Tipo=\"01\" Nombre=\"IVA\">\r\n                <Subtotal ValorBase=\"211659\" Valor=\"40215\" Porcentaje=\"19.00\" ValorUnidadMedidaBase=\"94\" CodigoUnidadMedidaBase=\"\" ValorTributoXUnidad=\"\"/>\r\n            </Impuesto>\r\n        </Impuestos>\r\n        <CodificacionesEstandar>\r\n            <CodificacionEstandar CodigoArticulo=\"00-10141\" CodigoEstandar=\"999\"/>\r\n        </CodificacionesEstandar>\r\n        <DatosAdicionales>\r\n            <CampoAdicional Nombre=\"Bodega\" Valor=\"01\"/>\r\n        </DatosAdicionales>\r\n    </Linea>\r\n    <Extensiones>\r\n        <DatosAdicionales>\r\n            <CampoAdicional Nombre=\"Vendedor\" Valor=\"JOSE APARICIO OSORNO CALDERON\"/>\r\n            <CampoAdicional Nombre=\"CodigoVendedor\" Valor=\"D08\"/>\r\n            <CampoAdicional Nombre=\"NombreFormPago\" Valor=\"45 DIAS\"/>\r\n            <CampoAdicional Nombre=\"ValorEnLetras\" Valor=\"DOSCIENTOS CINCUENTA Y UN MIL OCHOCIENTOS SETENTA Y CUATRO  PESOS M/L\"/>\r\n            <CampoAdicional Nombre=\"Pedido\" Valor=\"DPD-508062\"/>\r\n            <CampoAdicional Nombre=\"Usuario\" Valor=\"FACTU_DDAS\"/>\r\n            <CampoAdicional Nombre=\"DigVerificacionCli\" Valor=\"3\"/>\r\n            <CampoAdicional Nombre=\"Vigencia_Resolucion\" Valor=\"Vigencia 24 Meses\"/>\r\n        </DatosAdicionales>\r\n    </Extensiones>\r\n</Factura>"
+						},
+						"url": {
+							"raw": "https://plcolabbeta.azure-api.net/Issue/XML3",
+							"protocol": "https",
+							"host": [
+								"plcolabbeta",
+								"azure-api",
+								"net"
+							],
+							"path": [
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ND - DIAN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "ND-UBL"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"
+							},
+							{
+								"key": "X-Who",
+								"value": "37fa544c02764ceeaa81d98b99415ebc"
+							},
+							{
+								"key": "X-ASYNC",
+								"value": "false",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<NotaDebito>\r\n    <Cabecera Numero=\"ND25823\" OrdenCompra=\"0\" FechaEmision=\"2021-07-08\" HoraEmision=\"15:56:00\" Prefijo=\"ND\" Vencimiento=\"2020-06-13\" MonedaNota=\"COP\" Observaciones=\"\" FormaDePago=\"1\" LineasDeNota=\"2\" TipoOperacion=\"30\" />\r\n    \r\n    <FacturasRelacionadas>\r\n        <FacturaRelacionada Numero=\"CC3524453\" CUFE=\"3327fa2b0a9fa5fec270727a8eecc4185270ac44bb247d6c664212e403127de73109f78c2973d13ac9a296e06420c563\" FechaEmisionFA=\"2021-07-06\" />\r\n    </FacturasRelacionadas>\r\n    <Notificacion Tipo=\"Mail\" De=\"info@harcom.com.co\">\r\n        <Para>pruebas@facurecolombia.com</Para>\r\n    </Notificacion>\r\n    <Emisor TipoPersona=\"1\" TipoRegimen=\"02\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"9900272994\" DV=\"7\" RazonSocial=\"Hard Soft S.A.S.\" NombreComercial=\"HARD SOFT S.A.S.\">\r\n        <Direccion CodigoMunicipio=\"11001\" NombreCiudad=\"BOGOTÁ\" NombreDepartamento=\"Bogotá D.C\" CodigoDepartamento=\"11\" />\r\n        <ObligacionesEmisor>\r\n            <CodigoObligacion>O-15</CodigoObligacion>\r\n        </ObligacionesEmisor>\r\n\t\t<DireccionFiscal CodigoMunicipio=\"11001\" CodigoDepartamento=\"11\" Direccion=\"Cra 71 Bis # 67A - 76 of.01\" />\r\n        <TributoEmisor CodigoTributo=\"01\" NombreTributo=\"IVA\" />\r\n    </Emisor>\r\n    <Cliente TipoPersona=\"1\" TipoRegimen=\"03\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"860506429\" DV=\"9\" NombreComercial=\"CONGREGACION DE HERMANAS TERCIARIAS CAPUCHINAS DE LA SAGRADA FAMILIA - COLEGIO LA MERCED\" RazonSocial=\"CONGREGACION DE HERMANAS TERCIARIAS CAPUCHINAS DE LA SAGRADA FAMILIA - PROVINCIA MADRE DEL BUEN PAST\">\r\n        <Direccion CodigoMunicipio=\"001\" NombreCiudad=\"BUCARAMANGA\" CodigoPostal=\"\" NombreDepartamento=\"Santander\" CodigoDepartamento=\"68\" CodigoPais=\"CO\" NombrePais=\"COLOMBIA\" IdiomaPais=\"ES\" />\r\n        <DireccionFiscal CodigoMunicipio=\"001\" NombreCiudad=\"BUCARAMANGA\" CodigoPostal=\"\" NombreDepartamento=\"Santander\" CodigoDepartamento=\"68\" Direccion=\"CARRERA 33 # 56-207 BARRIO CONUCOS\" CodigoPais=\"CO\" NombrePais=\"COLOMBIA\" IdiomaPais=\"ES\" />\r\n        <Contacto Nombre=\"CONGREGACION DE HERMANAS TERCIARIAS CAPUCHINAS DE LA SAGRADA FAMILIA - COLEGIO LA MERCED\" Telefono=\"647-7041\" Telfax=\"\" Email=\"contadora@colman.edu.co\" Notas=\"\" />\r\n        <TributoCliente CodigoTributo=\"01\" NombreTributo=\"IVA\" />\r\n    </Cliente>\r\n    <MediosDePago CodigoMedioPago=\"10\" />\r\n        <DescuentosOCargos>\r\n            <DescuentoOCargo ID=\"1\" Indicador=\"false\" Justificacion=\"prueba\" Porcentaje=\"10.00\" Valor=\"818400\" ValorBase=\"8184000\" />\r\n        </DescuentosOCargos>\r\n        <Impuestos>\r\n            <Impuesto Valor=\"1554960\" Tipo=\"01\" Nombre=\"IVA\">\r\n                <Subtotal ValorBase=\"8184000\" Valor=\"1554960\" Porcentaje=\"19.00\" Tipo=\"94\" />\r\n            </Impuesto>\r\n        </Impuestos>\r\n    <Totales Bruto=\"8184000\" BaseImponible=\"8184000\" BrutoMasImpuestos=\"9738960\" Cargos=\"0\" Descuentos=\"818400\" Impuestos=\"1554960\" Retenciones=\"0\" General=\"8920560\" Anticipo=\"0\" Redondeo=\"\" />\r\n    <Linea>\r\n        <Detalle NumeroLinea=\"1\" Nota=\"\" Cantidad=\"550\" UnidadMedida=\"94\" SubTotalLinea=\"6105000\" Descripcion=\"Plataforma GeicoWeb - Facturacion\" CantidadXEmpaque=\"\" Marca=\"\" NombreModelo=\"\" CantidadBase=\"550\" UnidadCantidadBase=\"94\" PrecioUnitario=\"11100\" ValorTotalItem=\"6105000\" />\r\n\r\n        <Impuestos>\r\n            <Impuesto Valor=\"1159950\" Tipo=\"01\" Nombre=\"IVA\">\r\n                <Subtotal ValorBase=\"6105000\" Valor=\"1159950\" Porcentaje=\"19.00\" Tipo=\"94\" />\r\n            </Impuesto>\r\n        </Impuestos>\r\n\r\n    </Linea>\r\n    <Linea>\r\n        <Detalle NumeroLinea=\"2\" Nota=\"\" Cantidad=\"7\" UnidadMedida=\"94\" SubTotalLinea=\"2079000\" Descripcion=\"Servidor VPS\" CantidadXEmpaque=\"\" Marca=\"\" NombreModelo=\"\" CantidadBase=\"7\" UnidadCantidadBase=\"94\" PrecioUnitario=\"330000\" ValorTotalItem=\"2310000\" />\r\n        <DescuentosOCargos>\r\n            <DescuentoOCargo ID=\"2\" Indicador=\"false\" Justificacion=\"\" Porcentaje=\"10.00\" Valor=\"231000\" ValorBase=\"2310000\" />\r\n        </DescuentosOCargos>\r\n        <Impuestos>\r\n            <Impuesto Valor=\"395010\" Tipo=\"01\" Nombre=\"IVA\">\r\n                <Subtotal ValorBase=\"2079000\" Valor=\"395010\" Porcentaje=\"19.00\" Tipo=\"94\" />\r\n            </Impuesto>\r\n        </Impuestos>\r\n  \r\n    </Linea>\r\n        <Extensiones>\r\n        <DatosAdicionales>\r\n        </DatosAdicionales>\r\n    </Extensiones>\r\n</NotaDebito>"
+						},
+						"url": {
+							"raw": "https://plcolabbeta.azure-api.net/Issue/XML3",
+							"protocol": "https",
+							"host": [
+								"plcolabbeta",
+								"azure-api",
+								"net"
+							],
+							"path": [
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NC - DIAN",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "REQUEST-ID",
+								"value": "{{$guid}}"
+							},
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "NC-UBL"
+							},
+							{
+								"key": "X-REF-BRANCH",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-PROCESS",
+								"value": "PRINCIPAL",
+								"disabled": true
+							},
+							{
+								"key": "X-TRACE",
+								"value": "True",
+								"disabled": true
+							},
+							{
+								"key": "X-KEYCONTROL",
+								"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"
+							},
+							{
+								"key": "X-Who",
+								"value": "37fa544c02764ceeaa81d98b99415ebc"
+							},
+							{
+								"key": "X-ASYNC",
+								"value": "false",
+								"disabled": true
+							},
+							{
+								"key": "X-REF-TEMPLATE",
+								"value": "Ungerboeck",
+								"type": "text"
+							},
+							{
+								"key": "X-DOCUMENT-SOURCE",
+								"value": "API: WEB",
+								"description": "Este es para la validación del cune",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<NotaCredito>\r\n\t<Cabecera Numero=\"NC434160478\" FechaEmision=\"2022-02-28\" HoraEmision=\"11:31:52\" MonedaNota=\"COP\" Observaciones=\"#$13-13-00;SF30022021;ROBRNAL@SUPERFINANCIERA.GOV.CO#$\" FormaDePago=\"1\" LineasDeNota=\"6\" TipoOperacion=\"20\" Prefijo=\"NC\" NitFabricanteSoftware=\"43-1372405\" RazonSocialFabricanteSoftware=\"Ungerboeck\" NombreSoftware=\"Ungerboeck\" ambiente=\"2\"/>\r\n\t<ReferenciasNotas>\r\n\t\t<ReferenciaNota FacturaAsociada=\"SETT000200\" CodigoNota=\"1\" DescripcionNota=\"Nota Cretido prueba Anulacion\"/>\r\n\t</ReferenciasNotas>\r\n\t<FacturasRelacionadas>\r\n\t\t<FacturaRelacionada Numero=\"SETT4050033\" CUFE=\"eed93ff32ca9cbef72094325df8699efc490f3d3023ca1f4d724bdadaf179654de60dcdd30300cfc62bf89d5dfabc77\" FechaEmisionFA=\"2022-02-24\"/>\r\n\t</FacturasRelacionadas>\r\n\t<Notificacion Tipo=\"Mail\" De=\"\">\r\n\t\t<Para>pruebas@facturecolombia.com</Para>\r\n\t</Notificacion>\r\n\t<Emisor TipoPersona=\"1\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"86006694233\" DV=\"7\">\r\n\t\t<Nombre RazonSocial=\"CAJA DE COMPENSACIÓN FAMILIAR\" Registrado=\"CAJA DE COMPENSACIÓN FAMILIAR\"/>\r\n\t\t<Direccion CodigoPais=\"CO\" CodigoMunicipio=\"11001\" NombreCiudad=\"BOGOTÁ, D.C.\" CodigoDepartamento=\"11\" NombreDepartamento=\"BOGOTA\" Direccion=\"AV. 68 49 A – 47\"/>\r\n\t\t<DireccionFiscal CodigoMunicipio=\"11001\" CodigoDepartamento=\"11\" Direccion=\"AV 68 49 A 47\"/>\r\n\t\t<ObligacionesEmisor>\r\n\t\t\t<CodigoObligacion>O-13</CodigoObligacion>\r\n\t\t\t<CodigoObligacion>O-23</CodigoObligacion>\r\n\t\t</ObligacionesEmisor>\r\n\t\t<TributoEmisor CodigoTributo=\"ZA\" NombreTributo=\"IVA e INC\"/>\r\n\t\t<Contacto Nombre=\"Edwin Jerley Gonzalez Melo\" Email=\"ejgonzalez@compensar.com\" Notas=\"Entidad Sin Animo de Lucro\" Telefono=\"\"/>\r\n\t</Emisor>\r\n\t<Cliente NombreComercial=\"EMPRESA DE TRANSPORTE DEL TERCER MILENIO TRANSMILENIO SA\" RazonSocial=\"EMPRESA DE TRANSPORTE DEL TERCER MILENIO TRANSMILENIO SA\" TipoPersona=\"1\" TipoIdentificacion=\"31\" NumeroIdentificacion=\"830063506\" DV=\"4\">\r\n\t\t<Direccion CodigoMunicipio=\"11001\" NombreCiudad=\"BOGOTA D.C.\" NombreDepartamento=\"BOGOTA\" CodigoDepartamento=\"11\" Direccion=\"CL 13 # 3 ESTE - 28\" CodigoPais=\"CO\" NombrePais=\"COLOMBIA\" IdiomaPais=\"ES\"/>\r\n\t\t<Contacto Nombre=\"STHEFANY JULIETH RODRIGUEZ FRANCO \" Email=\"imquirogam@yopmail@.com\" Telefono=\"2302381\"/>\r\n\t\t<TributoCliente CodigoTributo=\"ZY\" NombreTributo=\"No Causa\"/>\r\n\t\t<ObligacionesCliente>\r\n\t\t\t<CodigoObligacion>O-23</CodigoObligacion>\r\n\t\t</ObligacionesCliente>\r\n\t</Cliente>\r\n\t<MediosDePago CodigoMedioPago=\"ZZZ\">\r\n\t</MediosDePago>\r\n\t<Totales Bruto=\"722150\" BaseImponible=\"622150\" BrutoMasImpuestos=\"822456\" Impuestos=\"100306\" General=\"822456\" Anticipo=\"450000\" Redondeo=\"0\"/>\r\n\t<Impuestos>\r\n\t\t<!--Codigo Ejemplo Iva !-->\r\n\t\t<Impuesto Valor=\"87286\" Tipo=\"01\" Nombre=\"IVA\" Redondeo=\"0\">\r\n\t\t\t<Subtotal ValorBase=\"459400\" Valor=\"87286\" Porcentaje=\"19.00\"/>\r\n\t\t</Impuesto>\r\n\t\t<!--Codigo Ejemplo 2 Impuesto Impoconsumo !-->\r\n\t\t<Impuesto Valor=\"13020\" Tipo=\"04\" Nombre=\"INC\" Redondeo=\"0\">\r\n\t\t\t<Subtotal ValorBase=\"162750\" Valor=\"13020\" Porcentaje=\"8.00\"/>\r\n\t\t</Impuesto>\r\n\t</Impuestos>\r\n\t<Retenciones/>\r\n\t<!--Linea No 1!-->\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"1\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"454400\" Descripcion=\"Bloque F Salon 1.1\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"454400\" ValorTotalItem=\"454400\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<Impuestos>\r\n\t\t\t<!--Codigo Ejemplo Impuesto Detalle !-->\r\n\t\t\t<Impuesto Valor=\"86336\" Tipo=\"01\" Nombre=\"IVA\" Redondeo=\"0\">\r\n\t\t\t\t<Subtotal ValorBase=\"454400\" Valor=\"86336\" Porcentaje=\"19.00\" ValorUnidadMedidaBase=\"\" CodigoUnidadMedidaBase=\"94\" ValorTributoXUnidad=\"\"/>\r\n\t\t\t</Impuesto>\r\n\t\t</Impuestos>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"BFS11\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"90111603\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t</Linea>\r\n\t<!--Linea No 2!-->\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"2\" Nota=\"\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"93000\" Descripcion=\"Estacion tinto (20 Pax)\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"93000\" ValorTotalItem=\"93000\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<Impuestos>\r\n\t\t\t<!--Codigo Ejemplo Impuesto Detalle 2 !-->\r\n\t\t\t<Impuesto Valor=\"7440\" Tipo=\"04\" Nombre=\"INC\" Redondeo=\"0\">\r\n\t\t\t\t<Subtotal ValorBase=\"93000\" Valor=\"7440\" Porcentaje=\"8.00\" ValorUnidadMedidaBase=\"\" CodigoUnidadMedidaBase=\"94\" ValorTributoXUnidad=\"\"/>\r\n\t\t\t</Impuesto>\r\n\t\t</Impuestos>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"32029-000005\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"90101601\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t</Linea>\r\n\t<!--Linea No 3!-->\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"3\" Nota=\"\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"50000\" Descripcion=\"Estacion Tinto (10 Pax)\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"50000\" ValorTotalItem=\"50000\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"32029-000006\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"90101601\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t</Linea>\r\n\t<!--Linea No 4!-->\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"4\" Nota=\"\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"50000\" Descripcion=\"Tarjeta Regalo\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"50000\" ValorTotalItem=\"50000\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"23016-010530\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"80141611\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t</Linea>\r\n\t<!--Linea No 5!-->\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"5\" Nota=\"\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"5000\" Descripcion=\"Gasto Administrativo\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"5000\" ValorTotalItem=\"5000\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<Impuestos>\r\n\t\t\t<!--Codigo Ejemplo Impuesto Detalle 5 !-->\r\n\t\t\t<Impuesto Valor=\"950\" Tipo=\"01\" Nombre=\"IVA\" Redondeo=\"0\">\r\n\t\t\t\t<Subtotal ValorBase=\"5000\" Valor=\"950\" Porcentaje=\"19.00\" ValorUnidadMedidaBase=\"\" CodigoUnidadMedidaBase=\"94\" ValorTributoXUnidad=\"\"/>\r\n\t\t\t</Impuesto>\r\n\t\t</Impuestos>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"20106-000045\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"80141607\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t\t<!--Linea No 6!-->\r\n\t</Linea>\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"6\" Nota=\"\" Cantidad=\"1\" UnidadMedida=\"94\" SubTotalLinea=\"69750\" Descripcion=\"Estacion tinto (20 Pax)\" CantidadBase=\"1\" UnidadCantidadBase=\"94\" PrecioUnitario=\"69750\" ValorTotalItem=\"69750\" Ocultar=\"\" Agrupador=\"\"/>\r\n\t\t<Impuestos>\r\n\t\t\t<!--Codigo Ejemplo Impuesto Detalle 2 !-->\r\n\t\t\t<Impuesto Valor=\"5580\" Tipo=\"04\" Nombre=\"INC\" Redondeo=\"0\">\r\n\t\t\t\t<Subtotal ValorBase=\"69750\" Valor=\"5580\" Porcentaje=\"8.00\" ValorUnidadMedidaBase=\"\" CodigoUnidadMedidaBase=\"94\" ValorTributoXUnidad=\"\"/>\r\n\t\t\t</Impuesto>\r\n\t\t</Impuestos>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"32029-000005\" CodigoExtendido=\"\"/>\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"90101601\" CodigoEstandar=\"001\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t</Linea>\r\n\t<Extensiones>\r\n\t\t<InformacionAdicionalRows/>\r\n\t\t<DatosAdicionales>\r\n\t\t\t<CampoAdicional Nombre=\"Valorapagar\" Valor=\"372456\"/>\r\n\t\t\t<CampoAdicional Nombre=\"Valorletras\" Valor=\"Ochocientos Veinti dos mil Cuatrocientos Cincuenta y Seis PESOS M/CTE\"/>\r\n\t\t\t<CampoAdicional Nombre=\"Elaboro\" Valor=\"528888344 Ingrid Marcela Quiroga\"/>\r\n\t\t\t<CampoAdicional Nombre=\"Observacion\" Valor=\"Pruebas de Observacion\"/>\r\n\t\t\t<CampoAdicional Nombre=\"ResponsableCliente\" Valor=\"Ingrid Marcela\"/>\r\n\t\t\t<CampoAdicional Nombre=\"Telefono\" Valor=\"2302381\"/>\r\n\t\t</DatosAdicionales>\r\n\t</Extensiones>\r\n</NotaCredito>"
+						},
+						"url": {
+							"raw": "https://plcolabbeta.azure-api.net/Issue/XML3",
+							"protocol": "https",
+							"host": [
+								"plcolabbeta",
+								"azure-api",
+								"net"
+							],
+							"path": [
+								"Issue",
+								"XML3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DSA-NSA",
+			"item": [
+				{
+					"name": "Nota de Ajuste XSD-UBL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOTNhOTczYi05MDQ0LTQ1ZmYtODhkZi1hZGYxMDExMzBiNDYiLCJuYW1lIjoiOTAwMTAwMjAxIiwiZGVzYyI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJ1c3IiOiI5MDAxMDAyMDEiLCIzaWQiOiI5MDAxMDAyMDEiLCIzbmFtZSI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJjY29kIjoiQ08iLCJyZWciOiIxMyIsImNpdHkiOiIxMzAwMSIsImFkZHIiOiJNYW5nYSIsInRheCI6IklNUElWQSIsIm1haWwiOiJwb3dlcmFkcXVpc2ljaW9uQHlvcG1haWwuY29tIiwiaXN3ZWIiOiJGYWxzZSIsInBpIjoiIiwicHRpZCI6ImZhY2I5NWRmLTFiMzMtNDA1Yi05NWE5LWE3NjcwMGUxZjViZCIsInBob25lIjoiMzIwNDU2ODk1MiIsIm5iZiI6MTY0MjUxMDk5MywiZXhwIjoxNjUwMjg2OTkyLCJpYXQiOjE2NDI1MTA5OTMsImlzcyI6InBsY29sYWItYXBpLTJxYS5henVyZXdlYnNpdGVzLm5ldCJ9.CQl0PsTvaeEQb122XOUnH0_M0gX1Gt1nDxZYY8hsN10",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "NA-SOPORTE-ADQUISICION",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<NotaSoporteAdquisiciones>\r\n    <Cabecera Numero=\"NSA160\"\r\n\t          FechaEmision=\"{{IssueDate}}\"\r\n\t          HoraEmision=\"13:23:00\"\r\n\t          TipoOperacion=\"10\"\r\n\t          TipoNota=\"95\"\r\n\t          Observaciones=\"Observaciones documento\"\r\n\t          MonedaNota=\"COP\"\r\n              OrdenCompra=\"1\"\r\n              FechaOrdenCompra=\"2022-03-13\"\r\n\t          LineasDeNota=\"1\"\r\n\t          Ambiente=\"2\"\r\n              NitFabricanteSoftware=\"900399741\"\r\n              RazonSocialFabricanteSoftware=\"Facture SAS\"\r\n              NombreSoftware=\"PLColab\"\r\n             />\r\n    <ObservacionesAdicionales>\r\n        <Observaciones>otras observaciones para el documento</Observaciones>\r\n        <Observaciones>otras observaciones para el documento....</Observaciones>\r\n    </ObservacionesAdicionales>\r\n   <MotivosNota>\r\n        <MotivoNota ID=\"1\"\r\n\t\t            ConceptoCorreccion=\"3\"\r\n\t\t            DescripcionConcepto=\"Rebaja o descuento parcial o total\"/>\r\n    </MotivosNota>\r\n    <SoporteAdquisicionesRelacionados>\r\n        <SoporteAdquisicionesRelacionado Numero=\"DSA211\"\r\n\t\t                                 CUDS=\"79334fbed7eb2fc1974115c218156e373c84fe3640fdfe48a89d82999796cbd33974ea3c892461605098dce4cc0ceabd\"\r\n\t\t                                 FechaEmision=\"2022-02-27\"/>\r\n    </SoporteAdquisicionesRelacionados>\r\n    <!--Iformación del Vendedor/Prestador del B/S (Sujeto No Obligado SNO)-->\r\n    <Emisor TipoPersona=\"1\"\r\n\t        RazonSocial=\"Mi proveedor SAS\"\r\n\t        NumeroIdentificacion=\"9005880436\"\r\n\t        DV=\"1\"\r\n\t        TipoIdentificacion=\"31\">\r\n        <Direccion CodigoMunicipio=\"13001\" \r\n          NombreCiudad=\"Cartagena de Indias\" \r\n          CodigoPostal=\"130001\" \r\n          NombreDepartamento=\"Bolivar\"  \r\n          CodigoDepartamento=\"13\" \r\n          Direccion='Manga' \r\n          CodigoPais=\"CO\" \r\n          NombrePais=\"Colombia\" \r\n          IdiomaPais=\"es\"/>\r\n       <DireccionesAdicionales>\r\n            <Direccion>Mi Empresa SA-cuando se manda lo rechaza la xsd y lo genera donde es</Direccion>\r\n        </DireccionesAdicionales>\r\n        <ObligacionesEmisor>\r\n            <CodigoObligacion>O-13</CodigoObligacion>\r\n        </ObligacionesEmisor>\r\n        <TributoEmisor CodigoTributo=\"01\"\r\n\t\t\t           NombreTributo=\"IVA\"/>\r\n    </Emisor>\r\n    <Cliente    TipoPersona=\"1\"\r\n\t\t        RazonSocial=\"Power Soporte de Adquisición \"\r\n\t\t        NumeroIdentificacion=\"900100201\"\r\n\t\t        DV=\"5\"\r\n\t\t        TipoIdentificacion=\"31\">\r\n        <ObligacionesCliente>\r\n            <CodigoObligacion>O-13</CodigoObligacion>\r\n        </ObligacionesCliente>\r\n        <TributoCliente CodigoTributo=\"01\"\r\n\t\t\t            NombreTributo=\"IVA\"/>\r\n    </Cliente>\r\n    <MediosDePago CodigoMedioPago=\"10\"\r\n\t\t          FormaDePago=\"1\"\r\n\t\t          Vencimiento=\"2022-06-30\">\r\n        <IdentificadorPago>\r\n            <ReferenciaPago>Referencia 1</ReferenciaPago>\r\n        </IdentificadorPago>\r\n    </MediosDePago>\r\n    <TasaDeCambio     MonedaDestino=\"EUR\"\r\n\t\t              ValorTasaDeCambio=\"3200\"\r\n\t\t              FechaTasaDeCambio=\"2022-03-14\"/>\r\n    <DescuentosOCargos>\r\n        <DescuentoOCargo ID=\"1\"\r\n\t\t\t             Indicador=\"true\"\r\n\t\t\t             CodigoDescuento=\"03\"\r\n\t\t\t             Justificacion=\"cargo por intereses\"\r\n\t\t\t             Porcentaje=\"3.00\"\r\n\t\t\t             Valor=\"3000.00\"\r\n\t\t\t             ValorBase=\"100000.00\"/>\r\n        <DescuentoOCargo ID=\"2\"\r\n\t\t\t             Indicador=\"false\"\r\n\t\t\t             CodigoDescuento=\"04\"\r\n\t\t\t             Justificacion=\"envío gratis\"\r\n\t\t\t             Porcentaje=\"5.00\"\r\n\t\t\t             Valor=\"5000.00\"\r\n\t\t\t             ValorBase=\"100000.00\"/>\r\n    </DescuentosOCargos>\r\n    <Impuestos>\r\n        <Impuesto Valor=\"19000\"\r\n\t\t\t      Tipo=\"01\"\r\n\t\t\t      Nombre=\"IVA\">\r\n            <Subtotal ValorBase=\"100000\"\r\n\t\t\t\t      Valor=\"19000\"\r\n\t\t\t\t      Porcentaje=\"19\"/>\r\n        </Impuesto>\r\n    </Impuestos>\r\n    <Totales Bruto=\"100000\"\r\n\t\t     BaseImponible=\"100000\"\r\n\t\t     BrutoMasImpuestos=\"119000\"\r\n\t\t     Cargos=\"3000\"\r\n\t\t     Descuentos=\"5000\"\r\n\t\t     Impuestos=\"19000\"\r\n\t\t     General=\"121000\"\r\n\t\t     Redondeo=\"0\"\r\n\t\t     TotalDescuentosLineas=\"0\"\r\n\t\t     TotalCargosLineas=\"0\"\r\n\t\t     TotalOtros1=\"0\"\r\n\t\t     TotalOtros2=\"0\"\r\n\t\t     TotalReteFuente=\"1\"\r\n\t\t     TotalReteIva=\"1\"/>\r\n    <Linea>\r\n        <Detalle NumeroLinea=\"1\"\r\n\t\t\t     Nota=\"Nota sobre el item\"\r\n\t\t\t     Cantidad=\"1\"\r\n\t\t\t     UnidadMedida=\"Unidad\"\r\n\t\t\t     SubTotalLinea=\"100000\"\r\n                 Descripcion=\"item de la linea #1\"\r\n\t\t\t     CantidadXEmpaque=\"1\"\r\n\t\t\t     Marca=\"Auteco\"\r\n\t\t\t     NombreModelo=\"AUTEC\"\r\n\t\t\t     CantidadBase=\"1\"\r\n\t\t\t     UnidadCantidadBase=\"Unidad\"\r\n\t\t\t     PrecioUnitario=\"100000\"\r\n                 ValorTotalItem=\"119000\"/>\r\n        <NotasAdicionales>\r\n            <Nota>Nota para el item</Nota>\r\n            <Nota>otra nota</Nota>\r\n        </NotasAdicionales>\r\n        \r\n        <DescuentosOCargos>\r\n            <DescuentoOCargo ID=\"1\"\r\n\t\t\t\t             Indicador=\"true\"\r\n\t\t\t\t             Justificacion=\"Por operación\"\r\n\t\t\t\t             Porcentaje=\"1\"\r\n\t\t\t\t             Valor=\"15000\"\r\n\t\t\t\t             ValorBase=\"15000\"/>\r\n            <DescuentoOCargo ID=\"1\"\r\n\t\t\t\t             Indicador=\"false\"\r\n\t\t\t\t             Justificacion=\"\"\r\n\t\t\t\t             Porcentaje=\"1\"\r\n\t\t\t\t             Valor=\"1200\"\r\n\t\t\t\t             ValorBase=\"1200\"/>\r\n        </DescuentosOCargos>\r\n        <Impuestos>\r\n            <Impuesto Valor=\"19000\"\r\n\t\t\t\t      Tipo=\"01\"\r\n\t\t\t\t      Nombre=\"IVA\">\r\n                <Subtotal ValorBase=\"100000\"\r\n\t\t\t\t\t      Valor=\"19000\"\r\n\t\t\t\t\t      Porcentaje=\"19\"/>\r\n            </Impuesto>\r\n        </Impuestos>\r\n        <CodificacionVendedor CodigoArticulo=\"AOHV84-225\"\r\n\t\t\t                  CodigoExtendido=\"AOHV84-225\"/>\r\n        <CodificacionesEstandar>\r\n            <CodificacionEstandar CodigoArticulo=\"REF1250\"\r\n\t\t\t\t                  CodigoEstandar=\"010\"/>\r\n        </CodificacionesEstandar>\r\n        <DatosAdicionales>\r\n            <CampoAdicional Nombre=\"01\"\r\n\t\t\t\t            Valor=\"6589568\"/>\r\n            <CampoAdicional Nombre=\"02\"\r\n\t\t\t\t            Valor=\"REM01212\"/>\r\n        </DatosAdicionales>\r\n    </Linea>\r\n    <Extensiones>\r\n        <!-- datos Interoperabilidad-->\r\n        <Interoperabilidad URLAdjunto=\"WWW.facture.co\">\r\n            <Grupo Nombre=\"Sector Salud\">\r\n                <Categoria Nombre=\"Usuario\">\r\n                    <CampoAdicional Nombre=\"Codigo prestador de servicios de salud\"\r\n\t\t\t\t\t\t                Valor=\"124545\"\r\n\t\t\t\t\t\t                NombreEsquema=\"nombreEs\"\r\n\t\t\t\t\t\t                IDEsquema=\"ideEs\"/>\r\n                    <CampoAdicional Nombre=\"Tipo de Documento de Identificación del Usuario\"\r\n\t\t\t\t\t\t            Valor=\"Cedula Ciudadania\"\r\n\t\t\t\t\t\t            NombreEsquema=\"salud_identificacion.gc\"\r\n\t\t\t\t\t\t            IDEsquema=\"CC\"/>\r\n                </Categoria>\r\n            </Grupo>\r\n        </Interoperabilidad>\r\n    </Extensiones>\r\n</NotaSoporteAdquisiciones>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Issue/Issue/xml3",
+							"protocol": "https",
+							"host": [
+								"plcolab-api-2qa",
+								"azurewebsites",
+								"net"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"xml3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Emisión DSA xsd Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOTNhOTczYi05MDQ0LTQ1ZmYtODhkZi1hZGYxMDExMzBiNDYiLCJuYW1lIjoiOTAwMTAwMjAxIiwiZGVzYyI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJ1c3IiOiI5MDAxMDAyMDEiLCIzaWQiOiI5MDAxMDAyMDEiLCIzbmFtZSI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJjY29kIjoiQ08iLCJyZWciOiIxMyIsImNpdHkiOiIxMzAwMSIsImFkZHIiOiJNYW5nYSIsInRheCI6IklNUElWQSIsIm1haWwiOiJwb3dlcmFkcXVpc2ljaW9uQHlvcG1haWwuY29tIiwiaXN3ZWIiOiJGYWxzZSIsInBpIjoiIiwicHRpZCI6ImZhY2I5NWRmLTFiMzMtNDA1Yi05NWE5LWE3NjcwMGUxZjViZCIsInBob25lIjoiMzIwNDU2ODk1MiIsIm5iZiI6MTY0Njk1MTc1OSwiZXhwIjoxNjU0OTAwNTU5LCJpYXQiOjE2NDY5NTE3NTksImlzcyI6InBsY29sYWItYXBpLTJxYS5henVyZXdlYnNpdGVzLm5ldCJ9.JdiuXsdXxdfd-tItZGWZdoc3Rcc0HewTc62TgRbZWEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-REF-DOCUMENTTYPE",
+								"value": "SOPORTE-ADQUISICION",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<SoporteAdquisiciones>\r\n\t<Cabecera Numero=\"SA164\" \r\n              FechaEmision=\"2022-03-28\" \r\n              HoraEmision=\"14:27:00\" \r\n              Vencimiento=\"2022-03-10\" \r\n              TipoOperacion=\"10\" \r\n              TipoDocumentoSoporte=\"05\" \r\n              Observaciones=\"Observaciones documento\" \r\n              MonedaDocumentoSoporte=\"COP\" \r\n              OrdenCompra=\"21111\"\r\n              FechaOrdenCompra=\"2022-03-22\"\r\n              LineasDeDocumentoSoporte=\"114\" \r\n              Ambiente=\"2\" \r\n              NitFabricanteSoftware=\"900399741\" \r\n              RazonSocialFabricanteSoftware=\"Facture SAS\" \r\n              NombreSoftware=\"PLColab\"/>\r\n\t<ObservacionesAdicionales>\r\n\t\t<Observaciones>otras observaciones para el documento....</Observaciones>\r\n\t\t<!--<Observaciones>otras observaciones para el documento....</Observaciones>-->\r\n\t</ObservacionesAdicionales>\r\n\t<NumeracionDIAN NumeroResolucion=\"1000052585\" FechaInicio=\"2022-03-02\" FechaFin=\"2023-09-02\" PrefijoNumeracion=\"SA\" ConsecutivoInicial=\"1\" ConsecutivoFinal=\"300\"/>\r\n\t<NASRelacionadas> \r\n\t\t<NASRelacionada Numero=\"NAS2\" CUDS=\"fq32c48e354bc907bccff0ea7d45fbf784f0a8e7243b58337361e1fbd431987\" FechaEmision=\"2021-12-01\"/>\r\n\t</NASRelacionadas>\r\n\t<Emisor TipoPersona=\"1\" \r\n            RazonSocial=\"Facture SAS\" \r\n            NumeroIdentificacion=\"900399741\" \r\n            DV=\"7\" \r\n            TipoIdentificacion=\"31\">\r\n\t\t<Direccion CodigoMunicipio=\"13001\"\r\n                    NombreCiudad=\"Cartagena de Indias\"\r\n                    CodigoPais=\"CO\"\r\n                    NombrePais=\"Colombia\"\r\n                    IdiomaPais=\"es\"\r\n                    CodigoPostal=\"130001\"\r\n                    NombreDepartamento=\"Bolivar\"\r\n                    CodigoDepartamento=\"13\"\r\n                    Direccion='Manga'/>\r\n                  <DireccionesAdicionales>\r\n                    <Direccion>Este es un adicional, ESTÁ GENERANDO ERROR</Direccion>\r\n                    <Direccion>Este es un adicional, ESTÁ GENERANDO ERROR2</Direccion>\r\n                     </DireccionesAdicionales>\r\n\t\t<ObligacionesEmisor>\r\n\t\t\t<CodigoObligacion>O-13</CodigoObligacion>\r\n\t\t</ObligacionesEmisor>\r\n\t\t<TributoEmisor CodigoTributo=\"01\" NombreTributo=\"IVA\"/>\r\n\t</Emisor>\r\n\t<Cliente TipoPersona=\"1\"\r\n             RazonSocial=\"Power Soporte de Adquisición\"\r\n             NumeroIdentificacion=\"900100201\"\r\n             DV=\"5\" \r\n             TipoIdentificacion=\"31\">\r\n\t\t<ObligacionesCliente>\r\n\t\t\t<CodigoObligacion>O-13</CodigoObligacion>\r\n\t\t</ObligacionesCliente>\r\n\t\t<TributoCliente CodigoTributo=\"01\" \r\n                        NombreTributo=\"IVA\"/>\r\n\t</Cliente>\r\n\t<MediosDePago CodigoMedioPago=\"10\" \r\n                  FormaDePago=\"1\" \r\n                  Vencimiento=\"2022-03-10\">\r\n\t\t<IdentificadorPago>\r\n\t\t\t<ReferenciaPago>Referencia 1</ReferenciaPago>\r\n\t\t\t<!--<ReferenciaPago>Referencia 2</ReferenciaPago>-->\r\n\t\t</IdentificadorPago>\r\n\t</MediosDePago>\r\n\t<DescuentosOCargos>\r\n\t\t<DescuentoOCargo ID=\"1\" \r\n                         Indicador=\"true\" \r\n                         CodigoDescuento=\"14\" \r\n                         Justificacion=\"cargo por intereses\"\r\n                         Porcentaje=\"5.00\" \r\n                         Valor=\"5000.00\" \r\n                         ValorBase=\"10000.00\"/>\r\n\t\t<DescuentoOCargo \r\n                          ID=\"1\" \r\n                          Indicador=\"false\" \r\n                          CodigoDescuento=\"04\" \r\n                          Justificacion=\"envío gratis\" \r\n                          Porcentaje=\"3.00\" \r\n                          Valor=\"3000.00\" \r\n                          ValorBase=\"100000.00\"/>\r\n\t</DescuentosOCargos>\r\n\r\n\t<TasaDeCambio MonedaDestino=\"COP\" \r\n                  ValorTasaDeCambio=\"3900\"\r\n                  FechaTasaDeCambio=\"2022-02-15\"/>\r\n\t<TasaDeCambioAlterna MonedaOrigen=\"USD\" \r\n                         MonedaDestino=\"COP\" \r\n                         ValorTasaDeCambio=\"1.00\" \r\n                         FechaTasaCambioAlterna=\"1900-01-01\"/>\r\n\t<Impuestos>\r\n\t\t<Impuesto Valor=\"19000\" \r\n                  Tipo=\"01\" \r\n                  Nombre=\"IVA\">\r\n\t\t\t<Subtotal ValorBase=\"100000\" \r\n                      Valor=\"19000.00\" \r\n                      Porcentaje=\"19\"/>\r\n\t\t</Impuesto>\r\n\t</Impuestos>\r\n\t<Retenciones>\r\n\t\t<!--CODIGO 06 ->Reterenta -->\r\n\t\t<Retencion Valor=\"62.5\" \r\n                   Tipo=\"06\" \r\n                   Nombre=\"Reterenta\">\r\n\t\t\t<Subtotal ValorBase=\"2500.00\" \r\n                      Valor=\"62.5\" \r\n                      Porcentaje=\"2.5\"/>\r\n\t\t</Retencion>\r\n\t\t<!--CODIGO 05 ->Reteiva-->\r\n\t\t<Retencion Valor=\"37.5\" \r\n                   Tipo=\"05\" \r\n                   Nombre=\"Reteiva\">\r\n\t\t\t<Subtotal ValorBase=\"2600.00\" \r\n                      Valor=\"37.5\" \r\n                      Porcentaje=\"1.5\"/>\r\n\t\t</Retencion>\r\n\t</Retenciones>\r\n\t<Totales Bruto=\"100000.00\" \r\n             BaseImponible=\"100000.00\" \r\n             BrutoMasImpuestos=\"119000.00\" \r\n             Cargos=\"5000.00\" \r\n             Descuentos=\"3000.00\" \r\n             Impuestos=\"19000.00\" \r\n             General=\"121000.00\" \r\n             Redondeo=\"0.00\" \r\n             TotalDescuentosLineas=\"0.00\" \r\n             TotalCargosLineas=\"1.01\" \r\n             TotalOtros1=\"1.02\" \r\n             TotalOtros2=\"1.03\" \r\n             TotalReteFuente=\"1.04\" \r\n             TotalReteIva=\"1.05\"/>\r\n\t<Linea>\r\n\t\t<Detalle NumeroLinea=\"1\" \r\n                 Nota=\"Nota sobre el item\" \r\n                 Cantidad=\"1\" \r\n                 UnidadMedida=\"Cualquier cosa\" \r\n\t\t         SubTotalLinea=\"100000.00\" \r\n\t\t         FechaCompra=\"2022-03-11\"\r\n\t\t         CodigoFormaGeneracionTransmision=\"1\"\r\n\t\t         DescripcionFormaGeneracionTransmision=\"Por operación\"\r\n                 Descripcion=\"item de la linea #1\" \r\n                 CantidadXEmpaque=\"1.00\" \r\n                 Marca=\"HP\" \r\n\t\t         NombreModelo=\"hp10000\" \r\n                 CantidadBase=\"1.00\" \r\n                 UnidadCantidadBase=\"1.00\" \r\n\t\t         PrecioUnitario=\"100000.00\"\r\n                 ValorTotalItem=\"119000.00\" />\r\n\t\t<NotasAdicionales>\r\n\t\t\t<Nota>Nota para el item</Nota>\r\n\t\t\t<Nota>otra nota</Nota>\r\n\r\n\t\t</NotasAdicionales>\r\n\t\t<DescuentosOCargos>\r\n\t\t\t<DescuentoOCargo ID=\"1\" \r\n                             Indicador=\"true\" \r\n                            Justificacion=\"cargo por intereses\"\r\n                            Porcentaje=\"10.00\" \r\n                            Valor=\"7300\" \r\n                            ValorBase=\"73000\"/>\r\n\t\t</DescuentosOCargos>\r\n\t\t<Impuestos>\r\n\t\t\t<Impuesto Valor=\"19000\" \r\n                      Tipo=\"01\" \r\n                      Nombre=\"IVA\">\r\n\t\t\t\t<Subtotal ValorBase=\"100000\" \r\n                          Porcentaje=\"19\"\r\n                          Valor=\"19000\" />\r\n\t\t\t</Impuesto>\r\n\t\t</Impuestos>\r\n\t\t<Retenciones>\r\n\t\t\t<!--CODIGO 06 ->Reterenta-->\r\n\t\t\t<Retencion Valor=\"62.5\" \r\n                       Tipo=\"06\" \r\n                       Nombre=\"Reterenta\">\r\n\t\t\t\t<Subtotal ValorBase=\"2500\" \r\n                          Porcentaje=\"2.5\" \r\n                          Valor=\"62.5\" />\r\n\t\t\t</Retencion>\r\n\t\t\t<!--CODIGO 05 ->Reteiva-->\r\n\t\t\t<Retencion Valor=\"37.5\" \r\n                       Tipo=\"05\" \r\n                       Nombre=\"Reteiva\">\r\n\t\t\t\t<Subtotal ValorBase=\"2500\" \r\n                          Valor=\"37.5\" \r\n                          Porcentaje=\"1.5\"/>\r\n\t\t\t</Retencion>\r\n\t\t</Retenciones>\r\n\t\t<CodificacionVendedor CodigoArticulo=\"22\" \r\n                              CodigoExtendido=\"1514\"/>\r\n\r\n\r\n\t\t<CodificacionesEstandar>\r\n\t\t\t<CodificacionEstandar CodigoArticulo=\"220658\"\r\n                                  CodigoEstandar=\"999\"/>\r\n\t\t</CodificacionesEstandar>\r\n\t\t<!--NO anexo-->\r\n\t\t<DatosAdicionales>\r\n\t\t\t<CampoAdicional Nombre=\"NombreUnidadMedida\" \r\n                            Valor=\"Litro\"/>\r\n\t\t\t<CampoAdicional Nombre=\"altura\" \r\n                            Valor=\"1.5\"/>\r\n\t\t</DatosAdicionales>\r\n\t</Linea>\r\n\t<!-- Extensiones: datos Interoperabilidad -->\r\n\t<Extensiones>\r\n\t\t<Interoperabilidad URLAdjunto=\"www.interoperabilidad.com\">\r\n\t\t\t<Grupo Nombre=\"Sector Salud\">\r\n\t\t\t\t<Categoria Nombre=\"Usuario\">\r\n\t\t\t\t\t<CampoAdicional Nombre=\"Codigo prestador de servicios de salud\" \r\n                                    Valor=\"124545\"\r\n                                    NombreEsquema=\"Nombrees\"\r\n                                    IDEsquema=\"idesque\"/>\r\n\t\t\t\t\t<CampoAdicional Nombre=\"Tipo de Documento de Identificación del Usuario\" \r\n                                    Valor=\"Cedula Ciudadania\"\r\n                                    NombreEsquema=\"salud_identificacion.gc\" \r\n                                    IDEsquema=\"CC\"/>\r\n\t\t\t\t</Categoria>\r\n\t\t\t</Grupo>\r\n\t\t</Interoperabilidad>\r\n\t</Extensiones>\r\n</SoporteAdquisiciones>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.Issue/Issue/xml3",
+							"protocol": "https",
+							"host": [
+								"plcolab-api-2qa",
+								"azurewebsites",
+								"net"
+							],
+							"path": [
+								"PLColab.Issue",
+								"Issue",
+								"xml3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Borrar Cache Api Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{$Token}}",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjOTNhOTczYi05MDQ0LTQ1ZmYtODhkZi1hZGYxMDExMzBiNDYiLCJuYW1lIjoiOTAwMTAwMjAxIiwiZGVzYyI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJ1c3IiOiI5MDAxMDAyMDEiLCIzaWQiOiI5MDAxMDAyMDEiLCIzbmFtZSI6IlBvd2VyIFNvcG9ydGUgZGUgQWRxdWlzaWNpw7NuICAiLCJjY29kIjoiQ08iLCJyZWciOiIxMyIsImNpdHkiOiIxMzAwMSIsImFkZHIiOiJNYW5nYSIsInRheCI6IklNUElWQSIsIm1haWwiOiJwb3dlcmFkcXVpc2ljaW9uQHlvcG1haWwuY29tIiwiaXN3ZWIiOiJGYWxzZSIsInBpIjoiIiwicHRpZCI6ImZhY2I5NWRmLTFiMzMtNDA1Yi05NWE5LWE3NjcwMGUxZjViZCIsInBob25lIjoiMzIwNDU2ODk1MiIsIm5iZiI6MTY0NTYzNTY5MCwiZXhwIjoxNjUzMzI1MjkwLCJpYXQiOjE2NDU2MzU2OTAsImlzcyI6InBsY29sYWItYXBpLTJxYS5henVyZXdlYnNpdGVzLm5ldCJ9.OlEaVzZqccnARh9XuBgk4s6KiUAV0rN6mqYDFXNydHM",
+						"type": "text"
+					},
+					{
+						"key": "REQUEST-ID",
+						"value": "{{$guid}}",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "X-TRACE",
+						"value": "True",
+						"type": "text"
+					},
+					{
+						"key": "X-Who",
+						"value": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://plcolab-api-2qa.azurewebsites.net/PLColab.SystemUtility/Util/ClearCacheTenant",
+					"protocol": "https",
+					"host": [
+						"plcolab-api-2qa",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"PLColab.SystemUtility",
+						"Util",
+						"ClearCacheTenant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Copy 4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"u\": \"900321520\",\r\n    \"p\": \"Facture2020$$\"\r\n}"
+				},
+				"url": {
+					"raw": "{{Uri}}/JwtAuth/Registration/Login",
+					"host": [
+						"{{Uri}}"
+					],
+					"path": [
+						"JwtAuth",
+						"Registration",
+						"Login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
