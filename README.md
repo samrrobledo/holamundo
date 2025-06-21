@@ -1,2 +1,0 @@
-# holamundo
-hola mundo bro
