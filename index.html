@@ -14,18 +14,53 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blur-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('bloqueado.jpg'); /* 🔒 preview bloqueado */
+      background-size: cover;
+      background-position: center;
+      filter: blur(12px) brightness(0.4);
+      z-index: -1;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .logo span {
+      color: #00c3ff;
+    }
+
+    .profile-pic {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #00c3ff;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 20px rgba(0,195,255,0.4);
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 0.5rem;
       color: #00c3ff;
     }
 
     p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       margin-bottom: 2rem;
     }
 
@@ -51,21 +86,16 @@
       background-color: #00a2d3;
       transform: scale(1.05);
     }
-
-    .logo {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-
-    .logo span {
-      color: #00c3ff;
-    }
   </style>
 </head>
 <body>
 
+  <div class="blur-background"></div>
+
   <div class="logo">0<span>nly</span>fans</div>
+
+  <!-- Foto de perfil -->
+  <img src="perfil.jpg" alt="Perfil" class="profile-pic">
 
   <h1>Acceso Exclusivo 🔥</h1>
   <p>Desbloquea contenido privado por solo <strong>$10 USD</strong></p>
