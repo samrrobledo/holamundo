@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>0nlyfans - Acceso Exclusivo</title>
+  <title>0nlyfans - Oferta Exclusiva</title>
   <style>
     body {
       margin: 0;
@@ -26,7 +26,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('2_k.png'); /* 🔒 preview bloqueado */
+      background-image: url('2_k.png');
       background-size: cover;
       background-position: center;
       filter: blur(12px) brightness(0.4);
@@ -64,6 +64,23 @@
       margin-bottom: 2rem;
     }
 
+    .oferta {
+      background-color: #ff0080;
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(255, 0, 128, 0.4);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
     form {
       background: rgba(255, 255, 255, 0.1);
       padding: 2rem;
@@ -94,18 +111,17 @@
 
   <div class="logo">0<span>nly</span>fans</div>
 
-  <!-- Foto de perfil -->
   <img src="1_k.jpeg" alt="Perfil" class="profile-pic">
 
   <h1>Acceso Exclusivo 🔥</h1>
-  <p>Desbloquea contenido privado por solo <strong>$10 USD</strong></p>
+  <div class="oferta">💥 ¡OFERTA LIMITADA: Solo $5 USD! 💥</div>
+  <p>Desbloquea todo el contenido premium a mitad de precio.</p>
 
-  <!-- Botón clásico de PayPal -->
   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
     <input type="hidden" name="cmd" value="_xclick">
     <input type="hidden" name="business" value="sam.rrobledo@gmail.com">
-    <input type="hidden" name="item_name" value="Membresía 0nlyfans">
-    <input type="hidden" name="amount" value="10.00">
+    <input type="hidden" name="item_name" value="Oferta Membresía 0nlyfans">
+    <input type="hidden" name="amount" value="5.00">
     <input type="hidden" name="currency_code" value="USD">
     <input type="submit" value="Pagar con PayPal 💳">
   </form>
