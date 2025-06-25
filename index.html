@@ -1,1 +1,32 @@
-<html><body><p>hola wey que pex, comon</p></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagar con PayPal</title>
+</head>
+<body>
+  <h1>Compra Premium</h1>
+  <p>Adquiere acceso completo por solo $10 USD</p>
+
+  <!-- Botón clásico de PayPal -->
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+    <!-- Comando para botón "Buy Now" -->
+    <input type="hidden" name="cmd" value="_xclick">
+
+    <!-- Tu correo de PayPal -->
+    <input type="hidden" name="business" value="sam.rrobledo@gmail.com">
+
+    <!-- Nombre del artículo -->
+    <input type="hidden" name="item_name" value="Membresía Premium">
+
+    <!-- Precio -->
+    <input type="hidden" name="amount" value="10.00">
+
+    <!-- Moneda -->
+    <input type="hidden" name="currency_code" value="USD">
+
+    <!-- Botón de pago -->
+    <input type="submit" value="Pagar con PayPal">
+  </form>
+</body>
+</html>
