@@ -2,31 +2,83 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pagar con PayPal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>0nlyfans - Acceso Exclusivo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      color: #00c3ff;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+    }
+
+    input[type="submit"] {
+      background-color: #00c3ff;
+      border: none;
+      color: #fff;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #00a2d3;
+      transform: scale(1.05);
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .logo span {
+      color: #00c3ff;
+    }
+  </style>
 </head>
 <body>
-  <h1>Compra Premium</h1>
-  <p>Adquiere acceso completo por solo $10 USD</p>
+
+  <div class="logo">0<span>nly</span>fans</div>
+
+  <h1>Acceso Exclusivo 🔥</h1>
+  <p>Desbloquea contenido privado por solo <strong>$10 USD</strong></p>
 
   <!-- Botón clásico de PayPal -->
   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-    <!-- Comando para botón "Buy Now" -->
     <input type="hidden" name="cmd" value="_xclick">
-
-    <!-- Tu correo de PayPal -->
-    <input type="hidden" name="business" value="sam.rrobledo@gmail.com">
-
-    <!-- Nombre del artículo -->
-    <input type="hidden" name="item_name" value="Membresía Premium">
-
-    <!-- Precio -->
+    <input type="hidden" name="business" value="tucorreo@paypal.com">
+    <input type="hidden" name="item_name" value="Membresía 0nlyfans">
     <input type="hidden" name="amount" value="10.00">
-
-    <!-- Moneda -->
     <input type="hidden" name="currency_code" value="USD">
-
-    <!-- Botón de pago -->
-    <input type="submit" value="Pagar con PayPal">
+    <input type="submit" value="Pagar con PayPal 💳">
   </form>
+
 </body>
 </html>
