@@ -1,27 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>0nlyfans - Oferta Exclusiva</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>0nlyfans - Acceso Exclusivo</title>
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       text-align: center;
       position: relative;
-      overflow: hidden;
     }
 
     .blur-background {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -30,13 +26,47 @@
       background-size: cover;
       background-position: center;
       filter: blur(12px) brightness(0.4);
-      z-index: -1;
+      z-index: -2;
+    }
+
+    .age-verification {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    .age-verification h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .age-verification button {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      background: #00c3ff;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .age-verification button:hover {
+      background: #00a2d3;
     }
 
     .logo {
       font-size: 2rem;
       font-weight: bold;
-      margin-bottom: 1rem;
+      margin-top: 1.5rem;
     }
 
     .logo span {
@@ -49,8 +79,27 @@
       border-radius: 50%;
       object-fit: cover;
       border: 5px solid #00c3ff;
-      margin-bottom: 1rem;
+      margin: 1rem auto;
       box-shadow: 0 0 20px rgba(0,195,255,0.4);
+      position: relative;
+    }
+
+    .status-dot {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      background: #00ff00;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff00;
+      animation: pulseDot 1s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     h1 {
@@ -59,26 +108,27 @@
       color: #00c3ff;
     }
 
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
-
     .oferta {
       background-color: #ff0080;
       color: white;
       padding: 0.4rem 1rem;
       border-radius: 50px;
       font-weight: bold;
-      margin-bottom: 1rem;
-      box-shadow: 0 0 10px rgba(255, 0, 128, 0.4);
+      margin: 1rem auto;
+      width: fit-content;
       animation: pulse 1.5s infinite;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+    .urgente {
+      color: #ffdf00;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      animation: parpadeo 1s infinite;
+    }
+
+    @keyframes parpadeo {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
     }
 
     form {
@@ -86,6 +136,8 @@
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+      display: inline-block;
+      margin-bottom: 2rem;
     }
 
     input[type="submit"] {
@@ -96,12 +148,54 @@
       font-size: 1.1rem;
       border-radius: 50px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      animation: vibrar 2s infinite;
+      box-shadow: 0 0 15px #00c3ff;
     }
 
     input[type="submit"]:hover {
       background-color: #00a2d3;
       transform: scale(1.05);
+    }
+
+    @keyframes vibrar {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    .locked-posts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .post {
+      width: 150px;
+      height: 150px;
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .post img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(8px) brightness(0.5);
+    }
+
+    .post::after {
+      content: "🔒 Contenido bloqueado";
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      font-size: 0.8rem;
+      background-color: rgba(0,0,0,0.6);
+      padding: 0.3rem 0;
     }
   </style>
 </head>
@@ -109,22 +203,41 @@
 
   <div class="blur-background"></div>
 
+  <!-- Pantalla de verificación de edad -->
+  <div class="age-verification" id="ageModal">
+    <h2>🔞 Solo para mayores de 18 años</h2>
+    <button onclick="document.getElementById('ageModal').style.display='none'">Soy mayor de edad</button>
+  </div>
+
   <div class="logo">0<span>nly</span>fans</div>
 
-  <img src="1_k.jpeg" alt="Perfil" class="profile-pic">
+  <div style="position: relative; display: inline-block;">
+    <img src="1_k.jpeg" alt="Perfil" class="profile-pic">
+    <div class="status-dot" title="En línea"></div>
+  </div>
 
   <h1>Acceso Exclusivo 🔥</h1>
-  <div class="oferta">💥 ¡OFERTA LIMITADA: Solo $5 USD! 💥</div>
-  <p>Desbloquea todo el contenido premium a mitad de precio.</p>
+  <div class="oferta">💥 ¡OFERTA LIMITADA: Solo $10 USD! 💥</div>
+  <p>Desbloquea todo el contenido premium y accede al paraíso visual.</p>
+  <div class="urgente">⚠️ Solo quedan 3 accesos disponibles hoy</div>
 
+  <!-- Botón de pago PayPal -->
   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
     <input type="hidden" name="cmd" value="_xclick">
     <input type="hidden" name="business" value="sam.rrobledo@gmail.com">
-    <input type="hidden" name="item_name" value="Oferta Membresía 0nlyfans">
-    <input type="hidden" name="amount" value="5.00">
+    <input type="hidden" name="item_name" value="Suscripción Premium 0nlyfans">
+    <input type="hidden" name="amount" value="10.00">
     <input type="hidden" name="currency_code" value="USD">
-    <input type="submit" value="Pagar con PayPal 💳">
+    <input type="submit" value="Desbloquear Todo 💳">
   </form>
+
+  <!-- Feed bloqueado estilo post -->
+  <div class="locked-posts">
+    <div class="post"><img src="preview1.jpeg" alt="Post Bloqueado 1"></div>
+    <div class="post"><img src="preview2.jpeg" alt="Post Bloqueado 2"></div>
+    <div class="post"><img src="preview3.jpeg" alt="Post Bloqueado 3"></div>
+    <div class="post"><img src="preview4.jpeg" alt="Post Bloqueado 4"></div>
+  </div>
 
 </body>
 </html>
